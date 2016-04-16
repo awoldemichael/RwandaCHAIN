@@ -155,7 +155,75 @@ x = ggplot(rw.df) +
   coord_equal() +
   theme_blank()
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/test.pdf',
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf',
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
+
+colour1 = 'yellow'
+colour2 = 'dodgerblue'
+
+y = rw.df2 %>% 
+  filter(mechanism %like% 'Gim')
+
+z = rw.df2 %>% 
+  filter(mechanism %like% 'RSMP')
+
+x = ggplot(rw.df) + 
+  aes(x = long, y = lat, group = id)+
+  geom_polygon(fill = grey15K) +
+  geom_polygon(fill = colour1, alpha = 0.6, data = y) +
+  geom_polygon(fill = colour2, alpha = 0.6, data = z) +
+  geom_path(color="white", size = 0.1) +
+  coord_equal() +
+  theme_blank()
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_overlap.pdf',
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
+
+
+y = rw.df2 %>% 
+  filter(project %like% 'FTF')
+
+x = ggplot(rw.df) + 
+  aes(x = long, y = lat, group = id)+
+  geom_polygon(fill = grey30K) +
+  geom_polygon(aes(fill = id), data = y) +
+  geom_path(color="white", size = 0.1) +
+  facet_wrap(~ mechanism) +
+  coord_equal() +
+  theme_blank()
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/ftf.pdf',
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
+
+
+y = rw.df2 %>% 
+  filter(project %like% 'Purple')
+
+x = ggplot(rw.df) + 
+  aes(x = long, y = lat, group = id)+
+  geom_polygon(fill = grey30K) +
+  geom_polygon(aes(fill = id), data = y) +
+  geom_path(color="white", size = 0.1) +
+  facet_wrap(~ mechanism) +
+  coord_equal() +
+  theme_blank()
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/puple.pdf',
        bg = 'transparent',
        paper = 'special',
        units = 'in',
