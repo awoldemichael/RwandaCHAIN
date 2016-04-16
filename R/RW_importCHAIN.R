@@ -109,7 +109,6 @@ gather(regCol, District, -project, -mechanism, -IP, -manager) %>% # convert from
   filter(!is.na(District), District != 'N/A') # remove NAs
 
 
-
 # Results -----------------------------------------------------------------
 
 results = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/RF Map to Partners.xlsx')
@@ -128,7 +127,13 @@ results = cSplit(results, 'Partners', ',') %>%
 
 
 # Merge df w/ Adm names ---------------------------------------------------
-df3 = full_join(df2, rwAdm2, by = c("District" = "District"))
+df_adm2 = full_join(df2, rwAdm2, by = c("District" = "District"))
+df_adm3 = full_join(df2, rwAdm, by = c("District" = "District"))
+
+
+# Save the results
+write.csv(df_adm3, '~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects_adm3.csv')
+write.csv(df_adm2, '~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects_adm2.csv')
 
 ggplot(df2, aes(x = District)) +
   geom_bar(stat = 'count') +
@@ -144,7 +149,7 @@ rw.df = plyr::join(rw.points, rw@data, by="id")
 
 # Maps! -------------------------------------------------------------------
 
-rw.df2 = full_join(rw.df, df3, by = c("Prov_ID", "Dist_ID", "District"))
+rw.df2 = full_join(rw.df, df_adm2, by = c("Prov_ID", "Dist_ID", "District"))
 
 y = rw.df2 %>% 
   filter(project %like% 'CHAIN')
@@ -237,9 +242,9 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/puple.pdf',
 
 # non-map viz -------------------------------------------------------------
 
-df3$District = factor(df3$District, levels = c('Gasabo', 'Kicukiro','Nyarugenge', 'Burera','Gakenke','Gicumbi','Musanze','Rulindo','Bugesera', 'Gatsibo', 'Kayonza',  'Kirehe',   'Ngoma','Nyagatare','Rwamagana','Gisagara',    'Huye', 'Kamonyi', 'Muhanga','Nyamagabe',  'Nyanza','Nyaruguru', 'Ruhango',  'Karongi','Ngororero',  'Nyabihu','Nyamasheke',   'Rubavu',   'Rusizi',  'Rutsiro'))
+df_adm2$District = factor(df_adm2$District, levels = c('Gasabo', 'Kicukiro','Nyarugenge', 'Burera','Gakenke','Gicumbi','Musanze','Rulindo','Bugesera', 'Gatsibo', 'Kayonza',  'Kirehe',   'Ngoma','Nyagatare','Rwamagana','Gisagara',    'Huye', 'Kamonyi', 'Muhanga','Nyamagabe',  'Nyanza','Nyaruguru', 'Ruhango',  'Karongi','Ngororero',  'Nyabihu','Nyamasheke',   'Rubavu',   'Rusizi',  'Rutsiro'))
 
-x = df3 %>% filter(project %like% 'CHAIN')
+x = df_adm2 %>% filter(project %like% 'CHAIN')
 
 orderMech = x %>% 
   group_by(mechanism) %>% 
