@@ -140,12 +140,20 @@ ggplot(df2, aes(x = District)) +
   facet_wrap(~IP)
   
 
+# Read in .shp files ------------------------------------------------------
+
 setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
 rw = readOGR(dsn=".", layer="District_Boundary_2006")
 rw@data$id = rownames(rw@data)
 rw.points = fortify(rw, region="id")
 rw.df = plyr::join(rw.points, rw@data, by="id")
 
+# Pull out the centroids of the coords and the names of the districts
+rw.centroids = data.frame(coordinates(rw)) %>% 
+  rename(long = X1, lat = X2)
+
+rw.centroids = cbind(rw.centroids,
+                     district = rw@data$District)
 
 # Maps! -------------------------------------------------------------------
 
@@ -155,13 +163,21 @@ y = rw.df2 %>%
   filter(project %like% 'CHAIN')
 
 x = ggplot(rw.df) + 
-  aes(x = long, y = lat, group = id)+
-  geom_polygon(fill = grey30K) +
-  geom_polygon(aes(fill = id), data = y) +
-  geom_path(color="white", size = 0.1) +
+  aes(x = long, y = lat)+
+  geom_polygon(aes(group = id),
+               fill = grey30K) +
+  geom_polygon(aes(group = id,fill = id), data = y) +
+  geom_path(aes(group = id),
+            color="white", size = 0.1) +
   facet_wrap(~ mechanism) +
   coord_equal() +
-  theme_blank()
+  theme_blank() +
+  geom_text(aes(x = long, y = lat, label = district), 
+             data = rw.centroids,
+            colour = grey90K,
+            size = 0.7)
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/test.pdf')
 
 ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf',
        bg = 'transparent',
