@@ -141,6 +141,9 @@ rw@data$id = rownames(rw@data)
 rw.points = fortify(rw, region="id")
 rw.df = plyr::join(rw.points, rw@data, by="id")
 
+
+# Maps! -------------------------------------------------------------------
+
 rw.df2 = full_join(rw.df, df3, by = c("Prov_ID", "Dist_ID", "District"))
 
 y = rw.df2 %>% 
@@ -230,3 +233,21 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/puple.pdf',
        useDingbats=FALSE,
        compress = FALSE,
        dpi = 300)
+
+
+# non-map viz -------------------------------------------------------------
+
+df3$District = factor(df3$District, levels = c('Gasabo', 'Kicukiro','Nyarugenge', 'Burera','Gakenke','Gicumbi','Musanze','Rulindo','Bugesera', 'Gatsibo', 'Kayonza',  'Kirehe',   'Ngoma','Nyagatare','Rwamagana','Gisagara',    'Huye', 'Kamonyi', 'Muhanga','Nyamagabe',  'Nyanza','Nyaruguru', 'Ruhango',  'Karongi','Ngororero',  'Nyabihu','Nyamasheke',   'Rubavu',   'Rusizi',  'Rutsiro'))
+
+x = df3 %>% filter(project %like% 'CHAIN')
+
+orderMech = x %>% 
+  group_by(mechanism) %>% 
+  summarise(num = n()) %>% 
+  arrange(desc(num))
+
+x$mechanism = factor(x$mechanism, levels = 
+                       orderMech$mechanism)
+
+ggplot(x, aes(x = District, y = mechanism)) +
+  geom_point(size = 5, colour = 'dodgerblue')
