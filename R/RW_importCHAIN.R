@@ -128,23 +128,37 @@ results = cSplit(results, 'Partners', ',') %>%
 
 
 # Merge df w/ Adm names ---------------------------------------------------
-df2 = full_join(df2, rwAdm2, by = c("District" = "District"))
+df3 = full_join(df2, rwAdm2, by = c("District" = "District"))
 
 ggplot(df2, aes(x = District)) +
   geom_bar(stat = 'count') +
   facet_wrap(~IP)
   
 
-setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin3/')
-rw = readOGR(dsn=".", layer="Rwanda_Admin_Three")
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
+rw = readOGR(dsn=".", layer="District_Boundary_2006")
 rw@data$id = rownames(rw@data)
 rw.points = fortify(rw, region="id")
 rw.df = plyr::join(rw.points, rw@data, by="id")
 
+rw.df2 = full_join(rw.df, df3, by = c("Prov_ID", "Dist_ID", "District"))
 
-x = ggplot(rw) + 
-  aes(long,lat)+
-  geom_polygon() +
-  geom_path(color="white") +
+y = rw.df2 %>% 
+  filter(project %like% 'CHAIN')
+
+x = ggplot(rw.df) + 
+  aes(x = long, y = lat, group = id)+
+  geom_polygon(fill = grey30K) +
+  geom_polygon(aes(fill = id), data = y) +
+  geom_path(color="white", size = 0.1) +
+  facet_wrap(~ mechanism) +
   coord_equal() +
-  scale_fill_brewer("Utah Ecoregion")
+  theme_blank()
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/test.pdf',
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
