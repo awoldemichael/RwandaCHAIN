@@ -23,7 +23,9 @@ loadPkgs()
 # Raw shapefile in R
 rwShp <- readShapePoly('~/Documents/USAID/Rwanda/data in/Rwanda_Admin3/Rwanda_Admin_Three.shp')
 
-rwAdm = rwShp@data
+rwAdm = rwShp@data %>% 
+  mutate(Province = ifelse(Province == 'Iburengerazuba',
+                           'Western Province', as.character(Province))) # Iburengerazuba == West
 
 # Pull out all the Adm2 names for each Adm1
 findAdm2 = function(adm1Name){
@@ -114,7 +116,7 @@ results = cSplit(results, 'Partners', ',') %>%
 
 
 # Merge df w/ Adm names ---------------------------------------------------
-df2 = left_join(df2, rwAdm, by = c("district" = "District"))
+df2 = full_join(df2, rwAdm, by = c("district" = "District"))
 
 
 rw = readOGR(dsn=".", layer="Rwanda_Admin_Three")
