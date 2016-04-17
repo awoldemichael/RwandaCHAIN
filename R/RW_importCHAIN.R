@@ -272,3 +272,33 @@ x$mechanism = factor(x$mechanism, levels =
 
 ggplot(x, aes(x = District, y = mechanism)) +
   geom_point(size = 5, colour = 'dodgerblue')
+
+
+# with basemap ------------------------------------------------------------
+
+basemap = get_map(location = 'Kigali Rwanda', 
+                  zoom = 9, source = 'google', maptype = 'terrain',
+                  color = 'bw')
+
+x = ggmap(basemap, darken = c(0.4,'black')) +
+  # aes(x = long, y = lat)+
+  # geom_polygon(aes(x = long, y = lat, group = id),
+               # fill = grey30K, alpha = 0.3) +
+  geom_polygon(aes(x = long, y = lat,
+                   group = id,fill = id, alpha = 0.3), data = y) +
+  geom_path(aes(x = long, y = lat,group = id),
+            color="white", size = 0.1, data= y) +
+  # coord_equal() +
+  theme_blank() +
+  geom_text(aes(x = long, y = lat, label = district), 
+            data = rw.centroids,
+            colour = grey90K,
+            size = 0.7)
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/test.pdf',
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
