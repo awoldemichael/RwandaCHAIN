@@ -2,7 +2,7 @@
 # Laura Hughes, April 2016, lhughes@usaid.gov
 
 
-# Installing packages note ------------------------------------------------
+# Installing packages ------------------------------------------------
 # In Mac OS X, need to install GDAL first.
 # In terminal, install macports: https://www.macports.org/install.php
 # Then 'sudo port install gdal'
@@ -13,14 +13,15 @@
 # http://tlocoh.r-forge.r-project.org/mac_rgeos_rgdal.html
 # Reinstall R, since El Capitan has problems w/ saving to usr/lib 
 # Install geos: http://www.kyngchaos.com/ 
-# At cmd line:
-# R CMD INSTALL /Users/laurahughes/Downloads/rgeos_0.3-19.tar.gz --configure-args='--with-geos-config=/Library/Frameworks/GEOS.framework/unix/bin/geos-config'
+# Then install :
 
 library(llamar)
 library(splitstackshape) 
 library(rgdal)
 library(maptools)
 library(rgeos)
+library(raster)
+library(rasterVis)
 loadPkgs()
 
 
@@ -109,10 +110,10 @@ gather(regCol, District, -project, -mechanism, -IP, -manager) %>% # convert from
   filter(!is.na(District), District != 'N/A') # remove NAs
 
 
-# Results -----------------------------------------------------------------
+# Add in the results data -----------------------------------------------------------------
 
 results = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/RF Map to Partners.xlsx')
-
+codebook = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/Partner Lookup Table.xlsx')
 
 # Split the column based on the comma
 results = cSplit(results, 'Partners', ',') %>% 
@@ -123,6 +124,8 @@ results = cSplit(results, 'Partners', ',') %>%
 
 # Check INWA tag is correct.
 
+# Translate the results into the main file.
+results2merge = left_
 
 
 
@@ -142,11 +145,22 @@ ggplot(df2, aes(x = District)) +
 
 # Read in .shp files ------------------------------------------------------
 
+# Admin 2
 setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
 rw = readOGR(dsn=".", layer="District_Boundary_2006")
 rw@data$id = rownames(rw@data)
 rw.points = fortify(rw, region="id")
 rw.df = plyr::join(rw.points, rw@data, by="id")
+
+# Lakes
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/')
+rw_lakes = readOGR(dsn=".", layer="RWA_Lakes")
+rw_lakes@data$id = rownames(rw_lakes@data)
+lakes.points = fortify(rw_lakes, region="id")
+lakes.df = plyr::join(lakes.points, rw_lakes@data, by="id")
+
+# Terrain
+rw_terrain = readGDAL('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/RWA_Terrain.tif')
 
 # Pull out the centroids of the coords and the names of the districts
 rw.centroids = data.frame(coordinates(rw)) %>% 
@@ -163,10 +177,13 @@ y = rw.df2 %>%
   filter(project %like% 'CHAIN')
 
 x = ggplot(rw.df) + 
-  aes(x = long, y = lat)+
+  aes(x = long, y = lat) +
   geom_polygon(aes(group = id),
                fill = grey30K) +
   geom_polygon(aes(group = id,fill = id), data = y) +
+  geom_polygon(aes(group = id), #lakes
+               fill = '#67a9cf',
+               data = lakes.df) +
   geom_path(aes(group = id),
             color="white", size = 0.1) +
   facet_wrap(~ mechanism) +
