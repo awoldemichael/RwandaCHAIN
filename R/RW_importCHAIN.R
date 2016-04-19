@@ -145,6 +145,8 @@ ggplot(df2, aes(x = District)) +
 
 # Read in .shp files ------------------------------------------------------
 
+
+
 # Admin 2
 setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
 rw = readOGR(dsn=".", layer="District_Boundary_2006")
@@ -152,6 +154,21 @@ rw@data$id = rownames(rw@data)
 rw.points = fortify(rw, region="id")
 rw.df = plyr::join(rw.points, rw@data, by="id")
 
+# Admin 0
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/')
+rw_adm0 = readOGR(dsn=".", layer="RWA_Adm0")
+rw_adm0@data$id = rownames(rw_adm0@data)
+adm0.points = fortify(rw_adm0, region="id")
+adm0.df = plyr::join(adm0.points, rw_lakes@data, by="id")
+
+ggplot(adm0.df) + 
+  aes(x = long, y = lat) +
+  geom_path(aes(group = id),
+            color= grey70K, size = 0.25) +
+  scale_x_continuous(limits = range(adm0.df$long) + c(0.001, -0.001)) +
+  scale_y_continuous(limits = range(adm0.df$lat) + c(0.001, -0.001)) +
+  theme_blank()
+  
 # Lakes
 setwd('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/')
 rw_lakes = readOGR(dsn=".", layer="RWA_Lakes")
@@ -162,12 +179,29 @@ lakes.df = plyr::join(lakes.points, rw_lakes@data, by="id")
 # Terrain
 rw_terrain = readGDAL('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/RWA_Terrain.tif')
 
+rw_terrain = raster('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/RWA_Terrain.tif')
+
+map.df <- data.frame(rasterToPoints(rw_terrain))
+
+
+gplot(rw_terrain) +
+  geom_tile(aes(fill = value)) +
+  scale_fill_gradientn(colours = brewer.pal(9, 'Greys')[1:5]) +
+  geom_path(aes(group = id),
+            color= grey70K, size = 0.25, data  = adm0.df) +
+  # scale_x_continuous(limits = range(adm0.df$long) + c(0.001, -0.001)) +
+  # scale_y_continuous(limits = range(adm0.df$lat) + c(0.001, -0.001)) +
+  theme_blank()
+
 # Pull out the centroids of the coords and the names of the districts
 rw.centroids = data.frame(coordinates(rw)) %>% 
   rename(long = X1, lat = X2)
 
 rw.centroids = cbind(rw.centroids,
                      district = rw@data$District)
+
+
+
 
 # Maps! -------------------------------------------------------------------
 
