@@ -301,31 +301,60 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_byResult.pdf',
 
 # Comparison of where work on CHAIN ---------------------------------------
 
-colour1 = 'yellow'
-colour2 = 'dodgerblue'
+colour1 = '#0868ac'
+colour2 = '#ffff33'
 
-y = rw.df2 %>% 
-  filter(mechanism %like% 'Gim')
+rw_CHAIN_proj = rw.df2 %>% 
+  filter(project %like% 'CHAIN')
 
-z = rw.df2 %>% 
-  filter(mechanism %like% 'RSMP')
+mechanisms = unique(rw_CHAIN_proj$mechanism)
 
-x = ggplot(rw.df) + 
-  aes(x = long, y = lat, group = id)+
-  geom_polygon(fill = grey15K) +
-  geom_polygon(fill = colour1, alpha = 0.6, data = y) +
-  geom_polygon(fill = colour2, alpha = 0.6, data = z) +
-  geom_path(color="white", size = 0.1) +
-  coord_equal() +
-  theme_blank()
+counter = 1
+plot_list = list()
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_overlap.pdf',
-       bg = 'transparent',
-       paper = 'special',
-       units = 'in',
-       useDingbats=FALSE,
-       compress = FALSE,
-       dpi = 300)
+for (i in 1:7){
+  for (j in 1:7){
+    print(counter)
+    
+    y = rw_CHAIN_proj %>% 
+      filter(mechanism %like% mechanisms[i])
+    
+    z = rw_CHAIN_proj %>% 
+      filter(mechanism %like% mechanisms[j])
+    
+    p = ggplot(rw_CHAIN_proj) + 
+      aes(x = long, y = lat, group = id)+
+      geom_polygon(fill = grey15K) +
+      geom_polygon(fill = colour1, alpha = 0.6, data = y) +
+      geom_polygon(fill = colour2, alpha = 0.6, data = z) +
+      geom_polygon(aes(group = id), #lakes
+                   fill = colourLakes,
+                   data = lakes.df) +
+      geom_path(color="white", size = 0.1) +
+      coord_equal() +
+      theme_blank() +
+      theme(title = element_text(size = 5)) +
+      ggtitle(paste(mechanisms[i], mechanisms[j], collapse = ' & '))
+    
+    plot_list[[counter]] = p
+    
+    
+    ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_overlap',
+                  counter, '.pdf', collapse = ''),
+           width = 3.5,
+           height = 2,
+           bg = 'transparent',
+           paper = 'special',
+           units = 'in',
+           useDingbats=FALSE,
+           compress = FALSE,
+           dpi = 300)
+    
+    counter = counter + 1
+  }}
+
+
+
 
 
 # FtF ---------------------------------------------------------------------
