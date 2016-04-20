@@ -241,13 +241,65 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf',
        compress = FALSE,
        dpi = 300)
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf',
+
+# CHAIN by results --------------------------------------------------------
+df_CHAIN = df_full %>% 
+  filter(isDistrict == 1,
+         project %like% 'CHAIN') %>% 
+  select(-Sector, -Sect_ID, -isSector) %>% 
+  group_by(Province, Prov_ID, 
+           District, Dist_ID, Result) %>% 
+  summarise(numProj = n()) 
+
+orderCHAIN = df_CHAIN %>% 
+  ungroup() %>% 
+  group_by(Result) %>%
+  mutate(numProj = sum(numProj)) %>% 
+  ungroup() %>% 
+  arrange(desc(numProj)) %>% 
+  select(Result, numProj) %>% 
+  distinct()
+
+
+# Refactorize
+df_CHAIN$Result = factor(df_CHAIN$Result,
+                         levels = orderCHAIN$Result)
+
+rwCHAIN = right_join(rw.df, df_CHAIN, by = c("Prov_ID", "Dist_ID", "District"))
+
+x = ggplot(rw.df) + 
+  aes(x = long, y = lat) +
+  geom_polygon(aes(group = id),
+               fill = grey30K) +
+  geom_polygon(aes(group = id,
+                   fill = numProj),
+               data = rwCHAIN) +
+  geom_path(aes(group = id),
+            color= grey75K, size = 0.1) +
+  geom_polygon(aes(group = id), #lakes
+               fill = colourLakes,
+               data = lakes.df) +
+  facet_wrap(~ Result) +
+  coord_equal() +
+  theme_blank() +
+  scale_fill_gradientn(colours = brewer.pal(9, 'YlGnBu')) +
+  geom_text(aes(x = long, y = lat, label = district), 
+            data = rw.centroids,
+            colour = grey90K,
+            size = 0.7) +
+  theme(strip.text = element_text(size = 5))
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_byResult.pdf', 
+       width = 10, height = 7,
        bg = 'transparent',
        paper = 'special',
        units = 'in',
        useDingbats=FALSE,
        compress = FALSE,
        dpi = 300)
+
+
+# Comparison of where work on CHAIN ---------------------------------------
 
 colour1 = 'yellow'
 colour2 = 'dodgerblue'
@@ -276,19 +328,26 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_overlap.pdf',
        dpi = 300)
 
 
+# FtF ---------------------------------------------------------------------
+
 y = rw.df2 %>% 
   filter(project %like% 'FTF')
 
 x = ggplot(rw.df) + 
   aes(x = long, y = lat, group = id)+
   geom_polygon(fill = grey30K) +
-  geom_polygon(aes(fill = id), data = y) +
+  geom_polygon(fill = colourRegions, data = y) +
   geom_path(color="white", size = 0.1) +
+  geom_polygon(aes(group = id), #lakes
+               fill = colourLakes,
+               data = lakes.df) +
   facet_wrap(~ mechanism) +
   coord_equal() +
   theme_blank()
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/ftf.pdf',
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/ftf.pdf', 
+       width = 10, height = 7,
        bg = 'transparent',
        paper = 'special',
        units = 'in',
@@ -297,19 +356,26 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/ftf.pdf',
        dpi = 300)
 
 
+
+# Purple ------------------------------------------------------------------
+
 y = rw.df2 %>% 
   filter(project %like% 'Purple')
 
 x = ggplot(rw.df) + 
   aes(x = long, y = lat, group = id)+
   geom_polygon(fill = grey30K) +
-  geom_polygon(aes(fill = id), data = y) +
+  geom_polygon(fill = colourRegions, data = y) +
   geom_path(color="white", size = 0.1) +
+  geom_polygon(aes(group = id), #lakes
+               fill = colourLakes,
+               data = lakes.df) +
   facet_wrap(~ mechanism) +
   coord_equal() +
   theme_blank()
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/puple.pdf',
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/purple.pdf',
+       width = 10, height = 7,
        bg = 'transparent',
        paper = 'special',
        units = 'in',
