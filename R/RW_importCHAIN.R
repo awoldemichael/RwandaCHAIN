@@ -303,6 +303,7 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_byResult.pdf',
 
 colour1 = '#0868ac'
 colour2 = '#ffff33'
+colourLakes = '#deebf7'
 
 rw_CHAIN_proj = rw.df2 %>% 
   filter(project %like% 'CHAIN')
@@ -317,10 +318,10 @@ for (i in 1:7){
     print(counter)
     
     y = rw_CHAIN_proj %>% 
-      filter(mechanism %like% mechanisms[i])
+      filter(mechanism == mechanisms[i])
     
     z = rw_CHAIN_proj %>% 
-      filter(mechanism %like% mechanisms[j])
+      filter(mechanism == mechanisms[j])
     
     p = ggplot(rw_CHAIN_proj) + 
       aes(x = long, y = lat, group = id)+
@@ -333,8 +334,8 @@ for (i in 1:7){
       geom_path(color="white", size = 0.1) +
       coord_equal() +
       theme_blank() +
-      theme(title = element_text(size = 5)) +
-      ggtitle(paste(mechanisms[i], mechanisms[j], collapse = ' & '))
+      theme(title = element_text(size = 3)) +
+      ggtitle(paste(mechanisms[i], mechanisms[j], sep = ' & '))
     
     plot_list[[counter]] = p
     
