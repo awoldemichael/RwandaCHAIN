@@ -226,7 +226,7 @@ orderCHAIN_dist = df_CHAIN_dist %>%
 
 # Refactorize
 df_adm2$mechanism = factor(df_adm2$mechanism,
-                         levels = orderCHAIN_dist$mechanism)
+                           levels = orderCHAIN_dist$mechanism)
 
 
 rw.df2 = full_join(rw.df, df_adm2, by = c("Prov_ID", "Dist_ID", "District"))
@@ -250,10 +250,10 @@ x = ggplot(rw.df) +
   coord_equal() +
   theme_blank() +
   scale_fill_manual(values = c(''))
-  # geom_text(aes(x = long, y = lat, label = district), 
-            # data = rw.centroids,
-            # colour = grey90K,
-            # size = 0.7)
+# geom_text(aes(x = long, y = lat, label = district), 
+# data = rw.centroids,
+# colour = grey90K,
+# size = 0.7)
 
 ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf', 
        width = 10, height = 7,
@@ -266,8 +266,41 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf',
 
 
 # CHAIN plots — # / Province ----------------------------------------------
+mechanisms = unique(df_CHAIN_dist$mechanism)
 
-
+for (i in seq_along(mechanisms)){
+  dfBar = df_CHAIN_dist %>% 
+    filter(mechanism == mechanisms[i])
+  
+  orderByMech = dfBar %>% 
+    arrange(numProj_adm1)
+  
+  dfBar$Province = factor(dfBar$Province, 
+                          levels = orderByMech$Province)
+  
+  
+  ggplot(dfBar, aes(x = Province, y = numProj_adm1, 
+                    fill = Province, label = numProj_adm1)) +
+    geom_bar(stat = 'identity') +
+    coord_flip() +
+    geom_text(colour = 'white', size = 4,
+              nudge_y = -0.3, 
+              family = 'Segoe UI') +
+    scale_fill_brewer(palette = 'Set1') +
+    theme_xylab() +
+    theme(axis.title = element_blank(), 
+          axis.text.x = element_blank())
+  
+  ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_',
+                mechanisms[i], '_bar.pdf'), 
+         width = 10, height = 7,
+         bg = 'transparent',
+         paper = 'special',
+         units = 'in',
+         useDingbats=FALSE,
+         compress = FALSE,
+         dpi = 300)
+}
 
 # CHAIN by results --------------------------------------------------------
 df_CHAIN = df_full %>% 
