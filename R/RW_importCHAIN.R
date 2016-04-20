@@ -202,7 +202,7 @@ rw.centroids = cbind(rw.centroids,
 
 # Maps! (CHAIN)-------------------------------------------------------------------
 colourRegions = '#fc8d59'
-colourLakes = '#67a9cf'
+colourLakes = '#deebf7'
 
 df_adm2 = df_full %>% 
   filter(isDistrict == 1, 
@@ -228,11 +228,19 @@ orderCHAIN_dist = df_CHAIN_dist %>%
 df_adm2$mechanism = factor(df_adm2$mechanism,
                            levels = orderCHAIN_dist$mechanism)
 
+df_adm2$Province = factor(df_adm2$Province, levels = c( 
+  'Northern Province',
+  'Kigali City',
+  'Western Province',
+  'Southern Province',
+  'Eastern Province'))
 
 rw.df2 = full_join(rw.df, df_adm2, by = c("Prov_ID", "Dist_ID", "District"))
 
 y = rw.df2 %>% 
   filter(project %like% 'CHAIN')
+
+
 
 x = ggplot(rw.df) + 
   aes(x = long, y = lat) +
@@ -249,7 +257,11 @@ x = ggplot(rw.df) +
   facet_wrap(~ mechanism) +
   coord_equal() +
   theme_blank() +
-  scale_fill_manual(values = c(''))
+  scale_fill_manual(values =c('Northern Province' = '#377eb8',
+                              'Kigali City' ='#e41a1c',
+                              'Western Province' = '#ff7f00',
+                              'Southern Province' = '#984ea3',
+                              'Eastern Province' = '#4daf4a'))
 # geom_text(aes(x = long, y = lat, label = district), 
 # data = rw.centroids,
 # colour = grey90K,
@@ -268,39 +280,68 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf',
 # CHAIN plots — # / Province ----------------------------------------------
 mechanisms = unique(df_CHAIN_dist$mechanism)
 
-for (i in seq_along(mechanisms)){
-  dfBar = df_CHAIN_dist %>% 
-    filter(mechanism == mechanisms[i])
-  
-  orderByMech = dfBar %>% 
-    arrange(numProj_adm1)
-  
-  dfBar$Province = factor(dfBar$Province, 
-                          levels = orderByMech$Province)
-  
-  
-  ggplot(dfBar, aes(x = Province, y = numProj_adm1, 
-                    fill = Province, label = numProj_adm1)) +
-    geom_bar(stat = 'identity') +
-    coord_flip() +
-    geom_text(colour = 'white', size = 4,
-              nudge_y = -0.3, 
-              family = 'Segoe UI') +
-    scale_fill_brewer(palette = 'Set1') +
-    theme_xylab() +
-    theme(axis.title = element_blank(), 
-          axis.text.x = element_blank())
-  
-  ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_',
-                mechanisms[i], '_bar.pdf'), 
-         width = 10, height = 7,
-         bg = 'transparent',
-         paper = 'special',
-         units = 'in',
-         useDingbats=FALSE,
-         compress = FALSE,
-         dpi = 300)
-}
+# for (i in seq_along(mechanisms)){
+# dfBar = df_CHAIN_dist %>% 
+#   filter(mechanism == mechanisms[i])
+dfBar = df_CHAIN_dist
+
+# orderByMech = dfBar %>% 
+#   arrange(numProj_adm1)
+
+orderByMech =  c('Kigali City', 
+                 'Northern Province',
+                 'Western Province',
+                 'Southern Province',
+                 'Eastern Province')
+
+dfBar$Province = factor(dfBar$Province, 
+                        levels = orderByMech)
+
+
+ggplot(dfBar, aes(x = Province, y = numProj_adm1, 
+                  fill = Province, label = numProj_adm1)) +
+  geom_bar(stat = 'identity') +
+  coord_flip() +
+  geom_text(colour = 'white', size = 4,
+            nudge_y = -0.3, 
+            family = 'Segoe UI') +
+  scale_fill_manual(values =c('Northern Province' = '#377eb8',
+                              'Kigali City' ='#e41a1c',
+                              'Western Province' = '#ff7f00',
+                              'Southern Province' = '#984ea3',
+                              'Eastern Province' = '#4daf4a')) +
+  theme_xylab() +
+  facet_wrap(~mechanism) +
+  theme(axis.title = element_blank(), 
+        axis.text.x = element_blank())
+
+ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_bar.pdf'), 
+       width = 9, height = 5,
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
+# }
+
+# CHAIN: # overall
+ggplot(df_CHAIN_dist, aes(x = mechanism, y = 1, 
+                          label = paste0(numProj, ' districts'), 
+                          fill = numProj)) +
+  geom_tile() +
+  geom_text(colour = grey90K, family = 'Segoe UI', size = 3) +
+  scale_fill_gradient(low = grey15K, high  = grey60K) +
+  theme_labelsOnly()
+
+ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_totalDist.pdf'), 
+       width = 6, height = 3,
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
 
 # CHAIN by results --------------------------------------------------------
 df_CHAIN = df_full %>% 
