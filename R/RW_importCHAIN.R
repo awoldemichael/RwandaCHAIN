@@ -1,5 +1,7 @@
 # Code to clean up Rwanda CHAIN IP data -----------------------------------
 # Laura Hughes, April 2016, lhughes@usaid.gov
+# Note: this code isn't impeccably documented, so please send questions 
+# if needed and I can clean it up. It's documented to make sense to me (hopefully) but probably makes no sense to others.
 
 
 # Installing packages ------------------------------------------------
@@ -141,7 +143,7 @@ df_full = full_join(df_full, results, by = c("IP" = "Implementing Partner",
 
 
 # Save the results
-write.csv(df_full, '~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects.csv')
+# write.csv(df_full, '~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects.csv')
 
 ggplot(df2, aes(x = District)) +
   geom_bar(stat = 'count') +
@@ -207,6 +209,26 @@ df_adm2 = df_full %>%
          isSector == 1) %>% 
   select(-Sector, -Sect_ID, -isSector)
 
+
+df_CHAIN_dist = df_adm2 %>% 
+  filter(project %like% 'CHAIN') %>% 
+  group_by(mechanism, Province) %>% 
+  summarise(numProj_adm1 = n()) %>%
+  ungroup() %>% 
+  group_by(mechanism) %>% 
+  mutate(numProj = sum(numProj_adm1)) %>% 
+  ungroup() %>% 
+  arrange(desc(numProj))
+
+orderCHAIN_dist = df_CHAIN_dist %>% 
+  select(mechanism, numProj) %>% 
+  distinct()
+
+# Refactorize
+df_adm2$mechanism = factor(df_adm2$mechanism,
+                         levels = orderCHAIN_dist$mechanism)
+
+
 rw.df2 = full_join(rw.df, df_adm2, by = c("Prov_ID", "Dist_ID", "District"))
 
 y = rw.df2 %>% 
@@ -216,8 +238,8 @@ x = ggplot(rw.df) +
   aes(x = long, y = lat) +
   geom_polygon(aes(group = id),
                fill = grey30K) +
-  geom_polygon(aes(group = id), 
-               fill = colourRegions,
+  geom_polygon(aes(group = id, fill = Province), 
+               # fill = colourRegions,
                data = y) +
   geom_path(aes(group = id),
             color="white", size = 0.1) +
@@ -227,10 +249,11 @@ x = ggplot(rw.df) +
   facet_wrap(~ mechanism) +
   coord_equal() +
   theme_blank() +
-  geom_text(aes(x = long, y = lat, label = district), 
-            data = rw.centroids,
-            colour = grey90K,
-            size = 0.7)
+  scale_fill_manual(values = c(''))
+  # geom_text(aes(x = long, y = lat, label = district), 
+            # data = rw.centroids,
+            # colour = grey90K,
+            # size = 0.7)
 
 ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf', 
        width = 10, height = 7,
@@ -240,6 +263,10 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf',
        useDingbats=FALSE,
        compress = FALSE,
        dpi = 300)
+
+
+# CHAIN plots — # / Province ----------------------------------------------
+
 
 
 # CHAIN by results --------------------------------------------------------
