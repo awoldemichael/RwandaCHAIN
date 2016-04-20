@@ -159,6 +159,14 @@ rw@data$id = rownames(rw@data)
 rw.points = fortify(rw, region="id")
 rw.df = plyr::join(rw.points, rw@data, by="id")
 
+# Admin 1
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin1/')
+rw_adm1 = readOGR(dsn=".", layer="Province_Boundary_2006")
+rw_adm1@data$id = rownames(rw_adm1@data)
+adm1.points = fortify(rw_adm1, region="id")
+adm1.df = plyr::join(adm1.points, rw_lakes@data, by="id")
+
+
 # Admin 0
 setwd('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/')
 rw_adm0 = readOGR(dsn=".", layer="RWA_Adm0")
@@ -197,12 +205,61 @@ rw.centroids = data.frame(coordinates(rw)) %>%
 rw.centroids = cbind(rw.centroids,
                      district = rw@data$District)
 
+adm1.centroids = data.frame(coordinates(rw_adm1)) %>% 
+  rename(long = X1, lat = X2)
+
+adm1.centroids = cbind(adm1.centroids,
+                     province = rw_adm1@data$Prov_Name)
+
+
+# Maps! Basic names -------------------------------------------------------
+colourRegions = '#fc8d59'
+colourLakes = '#a6cee3'
+
+
+x = ggplot(adm1.df) + 
+  aes(x = long, y = lat) +
+  geom_polygon(aes(group = id),
+               fill = grey30K) +
+  geom_path(aes(group = id),
+            colour = 'white',
+            data = rw.df,
+            size = 0.1) +
+  geom_path(aes(group = id, colour = id),
+            size = 0.2) +
+  geom_polygon(aes(group = id), #lakes
+               fill = colourLakes,
+               data = lakes.df) +
+  coord_equal() +
+  theme_blank() +
+  scale_colour_brewer(palette = 'Set1') +
+  # scale_colour_manual(values =c('Northern Province' = '#377eb8',
+                                # 'Kigali City' ='#e41a1c',
+                                # 'Western Province' = '#ff7f00',
+                                # 'Southern Province' = '#984ea3',
+                                # 'Eastern Province' = '#4daf4a')) +
+  geom_text(aes(x = long, y = lat, label = district),
+            data = rw.centroids,
+            colour = grey90K,
+            size = 1.2) +
+  geom_text(aes(x = long, y = lat, label = province),
+            data = adm1.centroids,
+            colour = grey90K,
+            size = 2)
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/rwanda_labeled.pdf', 
+       width = 5, height = 3.5,
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
 
 
 
 # Maps! (CHAIN)-------------------------------------------------------------------
-colourRegions = '#fc8d59'
-colourLakes = '#deebf7'
+
 
 df_adm2 = df_full %>% 
   filter(isDistrict == 1, 
