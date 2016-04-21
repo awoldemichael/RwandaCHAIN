@@ -258,6 +258,14 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/rwanda_labeled_raw.pdf',
        dpi = 300)
 
 # FtF ---------------------------------------------------------------------
+df_adm2 = df_full %>% 
+  filter(isDistrict == 1, 
+         isSector == 1) %>% 
+  select(-Sector, -Sect_ID, -isSector)
+
+
+rw.df2 = full_join(rw.df, df_adm2, by = c("Prov_ID", "Dist_ID", "District"))
+
 
 y = rw.df2 %>% 
   filter(project %like% 'FTF')
@@ -317,10 +325,6 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/purple_raw.pdf',
 # Maps! (CHAIN)-------------------------------------------------------------------
 
 
-df_adm2 = df_full %>% 
-  filter(isDistrict == 1, 
-         isSector == 1) %>% 
-  select(-Sector, -Sect_ID, -isSector)
 
 
 df_CHAIN_dist = df_adm2 %>% 
