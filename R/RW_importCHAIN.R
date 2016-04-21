@@ -60,7 +60,8 @@ southDistricts = findAdm2('South')
 eastDistricts = findAdm2('East')
 westDistricts = findAdm2('West')
 kigaliDistricts = findAdm2('Kigali')
-allDistricts = paste(northDistricts, southDistricts, eastDistricts, westDistricts, sep = ', ')
+allDistricts = paste(northDistricts, southDistricts, kigaliDistricts,
+                     eastDistricts, westDistricts, sep = ', ')
 
 
 # Project locations -------------------------------------------------------
@@ -143,7 +144,7 @@ df_full = full_join(df_full, results, by = c("IP" = "Implementing Partner",
 
 
 # Save the results
-# write.csv(df_full, '~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects.csv')
+write.csv(df_full, '~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects.csv')
 
 ggplot(df2, aes(x = District)) +
   geom_bar(stat = 'count') +
