@@ -29,7 +29,68 @@ loadPkgs()
 
 # Import and clean “raw” data -----------------------------------------------------
 
-# geo data ----------------------------------------------------------------
+# Read in .shp files ------------------------------------------------------
+
+# Admin 2
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
+rw = readOGR(dsn=".", layer="District_Boundary_2006")
+rw@data$id = rownames(rw@data)
+rw.points = fortify(rw, region="id")
+rw.df = plyr::join(rw.points, rw@data, by="id")
+
+# Admin 1
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin1/')
+rw_adm1 = readOGR(dsn=".", layer="Province_Boundary_2006")
+rw_adm1@data$id = rownames(rw_adm1@data)
+adm1.points = fortify(rw_adm1, region="id")
+adm1.df = plyr::join(adm1.points, rw_adm1@data, by="id")
+
+
+# Admin 0
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/')
+rw_adm0 = readOGR(dsn=".", layer="RWA_Adm0")
+rw_adm0@data$id = rownames(rw_adm0@data)
+adm0.points = fortify(rw_adm0, region="id")
+adm0.df = plyr::join(adm0.points, rw_adm0@data, by="id")
+
+ggplot(adm0.df) + 
+  aes(x = long, y = lat) +
+  geom_path(aes(group = group),
+            color= grey70K, size = 0.25) +
+  scale_x_continuous(limits = range(adm0.df$long) + c(0.001, -0.001)) +
+  scale_y_continuous(limits = range(adm0.df$lat) + c(0.001, -0.001)) +
+  theme_blank()
+
+# Lakes
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/')
+rw_lakes = readOGR(dsn=".", layer="RWA_Lakes")
+rw_lakes@data$id = rownames(rw_lakes@data)
+lakes.points = fortify(rw_lakes, region="id")
+lakes.df = plyr::join(lakes.points, rw_lakes@data, by="id")
+
+# Terrain
+rw_terrain = readGDAL('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/RWA_Terrain.tif')
+
+rw_terrain = raster('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/RWA_Terrain.tif')
+
+map.df <- data.frame(rasterToPoints(rw_terrain))
+
+
+
+# Pull out the centroids of the coords and the names of the districts
+rw.centroids = data.frame(coordinates(rw)) %>% 
+  rename(long = X1, lat = X2)
+
+rw.centroids = cbind(rw.centroids,
+                     district = rw@data$District)
+
+adm1.centroids = data.frame(coordinates(rw_adm1)) %>% 
+  rename(long = X1, lat = X2)
+
+adm1.centroids = cbind(adm1.centroids,
+                       province = rw_adm1@data$Prov_Name)
+
+
 
 # Raw shapefile in R
 rwShp <- readShapePoly('~/Documents/USAID/Rwanda/data in/Rwanda_Admin3/Rwanda_Admin_Three.shp')
@@ -151,67 +212,6 @@ ggplot(df2, aes(x = District)) +
   facet_wrap(~IP)
 
 
-# Read in .shp files ------------------------------------------------------
-
-# Admin 2
-setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
-rw = readOGR(dsn=".", layer="District_Boundary_2006")
-rw@data$id = rownames(rw@data)
-rw.points = fortify(rw, region="id")
-rw.df = plyr::join(rw.points, rw@data, by="id")
-
-# Admin 1
-setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin1/')
-rw_adm1 = readOGR(dsn=".", layer="Province_Boundary_2006")
-rw_adm1@data$id = rownames(rw_adm1@data)
-adm1.points = fortify(rw_adm1, region="id")
-adm1.df = plyr::join(adm1.points, rw_lakes@data, by="id")
-
-
-# Admin 0
-setwd('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/')
-rw_adm0 = readOGR(dsn=".", layer="RWA_Adm0")
-rw_adm0@data$id = rownames(rw_adm0@data)
-adm0.points = fortify(rw_adm0, region="id")
-adm0.df = plyr::join(adm0.points, rw_lakes@data, by="id")
-
-ggplot(adm0.df) + 
-  aes(x = long, y = lat) +
-  geom_path(aes(group = id),
-            color= grey70K, size = 0.25) +
-  scale_x_continuous(limits = range(adm0.df$long) + c(0.001, -0.001)) +
-  scale_y_continuous(limits = range(adm0.df$lat) + c(0.001, -0.001)) +
-  theme_blank()
-
-# Lakes
-setwd('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/')
-rw_lakes = readOGR(dsn=".", layer="RWA_Lakes")
-rw_lakes@data$id = rownames(rw_lakes@data)
-lakes.points = fortify(rw_lakes, region="id")
-lakes.df = plyr::join(lakes.points, rw_lakes@data, by="id")
-
-# Terrain
-rw_terrain = readGDAL('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/RWA_Terrain.tif')
-
-rw_terrain = raster('~/Documents/USAID/Rwanda/data in/Rwanda basemaps/RWA_Terrain.tif')
-
-map.df <- data.frame(rasterToPoints(rw_terrain))
-
-
-
-# Pull out the centroids of the coords and the names of the districts
-rw.centroids = data.frame(coordinates(rw)) %>% 
-  rename(long = X1, lat = X2)
-
-rw.centroids = cbind(rw.centroids,
-                     district = rw@data$District)
-
-adm1.centroids = data.frame(coordinates(rw_adm1)) %>% 
-  rename(long = X1, lat = X2)
-
-adm1.centroids = cbind(adm1.centroids,
-                     province = rw_adm1@data$Prov_Name)
-
 
 # Maps! Basic names -------------------------------------------------------
 colourRegions = '#fc8d59'
@@ -220,15 +220,15 @@ colourLakes = '#a6cee3'
 
 x = ggplot(adm1.df) + 
   aes(x = long, y = lat) +
-  geom_polygon(aes(group = id),
+  geom_polygon(aes(group = group),
                fill = grey30K) +
-  geom_path(aes(group = id),
+  geom_path(aes(group = group),
             colour = 'white',
             data = rw.df,
             size = 0.1) +
-  geom_path(aes(group = id, colour = id),
+  geom_path(aes(group = group, colour = id),
             size = 0.2) +
-  geom_polygon(aes(group = id), #lakes
+  geom_polygon(aes(group = group), #lakes
                fill = colourLakes,
                data = lakes.df) +
   coord_equal() +
@@ -248,8 +248,63 @@ x = ggplot(adm1.df) +
             colour = grey90K,
             size = 2)
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/rwanda_labeled.pdf', 
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/rwanda_labeled_raw.pdf', 
        width = 5, height = 3.5,
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
+
+# FtF ---------------------------------------------------------------------
+
+y = rw.df2 %>% 
+  filter(project %like% 'FTF')
+
+x = ggplot(rw.df) + 
+  aes(x = long, y = lat, group = group)+
+  geom_polygon(fill = grey30K) +
+  geom_polygon(fill = colourRegions, data = y) +
+  geom_path(color="white", size = 0.1) +
+  geom_polygon(aes(group = group), #lakes
+               fill = colourLakes,
+               data = lakes.df) +
+  facet_wrap(~ mechanism) +
+  coord_equal() +
+  theme_blank()
+
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/ftf_raw.pdf', 
+       width = 10, height = 7,
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
+
+
+
+# Purple ------------------------------------------------------------------
+
+y = rw.df2 %>% 
+  filter(project %like% 'Purple')
+
+x = ggplot(rw.df) + 
+  aes(x = long, y = lat, group = group)+
+  geom_polygon(fill = grey30K) +
+  geom_polygon(fill = colourRegions, data = y) +
+  geom_path(color="white", size = 0.1) +
+  geom_polygon(aes(group = group), #lakes
+               fill = colourLakes,
+               data = lakes.df) +
+  facet_wrap(~ mechanism) +
+  coord_equal() +
+  theme_blank()
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/purple_raw.pdf',
+       width = 10, height = 7,
        bg = 'transparent',
        paper = 'special',
        units = 'in',
@@ -302,14 +357,14 @@ y = rw.df2 %>%
 
 x = ggplot(rw.df) + 
   aes(x = long, y = lat) +
-  geom_polygon(aes(group = id),
+  geom_polygon(aes(group = group),
                fill = grey30K) +
-  geom_polygon(aes(group = id, fill = Province), 
+  geom_polygon(aes(group = group, fill = Province), 
                # fill = colourRegions,
                data = y) +
-  geom_path(aes(group = id),
+  geom_path(aes(group = group),
             color="white", size = 0.1) +
-  geom_polygon(aes(group = id), #lakes
+  geom_polygon(aes(group = group), #lakes
                fill = colourLakes,
                data = lakes.df) +
   facet_wrap(~ mechanism) +
@@ -325,7 +380,7 @@ x = ggplot(rw.df) +
 # colour = grey90K,
 # size = 0.7)
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain.pdf', 
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_raw.pdf', 
        width = 10, height = 7,
        bg = 'transparent',
        paper = 'special',
@@ -373,7 +428,7 @@ ggplot(dfBar, aes(x = Province, y = numProj_adm1,
   theme(axis.title = element_blank(), 
         axis.text.x = element_blank())
 
-ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_bar.pdf'), 
+ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_bar_raw.pdf'), 
        width = 9, height = 5,
        bg = 'transparent',
        paper = 'special',
@@ -392,7 +447,7 @@ ggplot(df_CHAIN_dist, aes(x = mechanism, y = 1,
   scale_fill_gradient(low = grey15K, high  = grey60K) +
   theme_labelsOnly()
 
-ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_totalDist.pdf'), 
+ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_totalDist_raw.pdf'), 
        width = 6, height = 3,
        bg = 'transparent',
        paper = 'special',
@@ -428,14 +483,14 @@ rwCHAIN = right_join(rw.df, df_CHAIN, by = c("Prov_ID", "Dist_ID", "District"))
 
 x = ggplot(rw.df) + 
   aes(x = long, y = lat) +
-  geom_polygon(aes(group = id),
+  geom_polygon(aes(group = group),
                fill = grey30K) +
-  geom_polygon(aes(group = id,
+  geom_polygon(aes(group = group,
                    fill = numProj),
                data = rwCHAIN) +
-  geom_path(aes(group = id),
+  geom_path(aes(group = group),
             color= grey75K, size = 0.1) +
-  geom_polygon(aes(group = id), #lakes
+  geom_polygon(aes(group = group), #lakes
                fill = colourLakes,
                data = lakes.df) +
   facet_wrap(~ Result) +
@@ -448,7 +503,7 @@ x = ggplot(rw.df) +
             size = 0.7) +
   theme(strip.text = element_text(size = 5))
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_byResult.pdf', 
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_byResult_raw.pdf', 
        width = 10, height = 7,
        bg = 'transparent',
        paper = 'special',
@@ -484,7 +539,7 @@ ggplot(numResults_byMech, aes(y = num,
   coord_flip() +
   theme_xgrid()
 
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_numResults.pdf', 
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_numResults_raw.pdf', 
        width = 10, height = 4,
        bg = 'transparent',
        paper = 'special',
@@ -519,11 +574,11 @@ for (i in 1:7){
       filter(mechanism == mechanisms[j])
     
     p = ggplot(rw_CHAIN_proj) + 
-      aes(x = long, y = lat, group = id)+
+      aes(x = long, y = lat, group = group)+
       geom_polygon(fill = grey15K) +
       geom_polygon(fill = colour1, alpha = 0.6, data = y) +
       geom_polygon(fill = colour2, alpha = 0.6, data = z) +
-      geom_polygon(aes(group = id), #lakes
+      geom_polygon(aes(group = group), #lakes
                    fill = colourLakes,
                    data = lakes.df) +
       geom_path(color="white", size = 0.1) +
@@ -535,7 +590,7 @@ for (i in 1:7){
     plot_list[[counter]] = p
     
     
-    ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_overlap',
+    ggsave(paste0('~/Documents/USAID/Rwanda/CHAIN/plots/chain_overlap_raw',
                   counter, '.pdf', collapse = ''),
            width = 3.5,
            height = 2,
@@ -553,65 +608,11 @@ for (i in 1:7){
 
 
 
-# FtF ---------------------------------------------------------------------
-
-y = rw.df2 %>% 
-  filter(project %like% 'FTF')
-
-x = ggplot(rw.df) + 
-  aes(x = long, y = lat, group = id)+
-  geom_polygon(fill = grey30K) +
-  geom_polygon(fill = colourRegions, data = y) +
-  geom_path(color="white", size = 0.1) +
-  geom_polygon(aes(group = id), #lakes
-               fill = colourLakes,
-               data = lakes.df) +
-  facet_wrap(~ mechanism) +
-  coord_equal() +
-  theme_blank()
-
-
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/ftf.pdf', 
-       width = 10, height = 7,
-       bg = 'transparent',
-       paper = 'special',
-       units = 'in',
-       useDingbats=FALSE,
-       compress = FALSE,
-       dpi = 300)
-
-
-
-# Purple ------------------------------------------------------------------
-
-y = rw.df2 %>% 
-  filter(project %like% 'Purple')
-
-x = ggplot(rw.df) + 
-  aes(x = long, y = lat, group = id)+
-  geom_polygon(fill = grey30K) +
-  geom_polygon(fill = colourRegions, data = y) +
-  geom_path(color="white", size = 0.1) +
-  geom_polygon(aes(group = id), #lakes
-               fill = colourLakes,
-               data = lakes.df) +
-  facet_wrap(~ mechanism) +
-  coord_equal() +
-  theme_blank()
-
-ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/purple.pdf',
-       width = 10, height = 7,
-       bg = 'transparent',
-       paper = 'special',
-       units = 'in',
-       useDingbats=FALSE,
-       compress = FALSE,
-       dpi = 300)
-
 
 # non-map viz -------------------------------------------------------------
 
-df_adm2$District = factor(df_adm2$District, levels = c('Gasabo', 'Kicukiro','Nyarugenge', 'Burera','Gakenke','Gicumbi','Musanze','Rulindo','Bugesera', 'Gatsibo', 'Kayonza',  'Kirehe',   'Ngoma','Nyagatare','Rwamagana','Gisagara',    'Huye', 'Kamonyi', 'Muhanga','Nyamagabe',  'Nyanza','Nyaruguru', 'Ruhango',  'Karongi','Ngororero',  'Nyabihu','Nyamasheke',   'Rubavu',   'Rusizi',  'Rutsiro'))
+df_adm2$District = factor(df_adm2$District, 
+                          levels = c('Gasabo', 'Kicukiro','Nyarugenge', 'Burera','Gakenke','Gicumbi','Musanze','Rulindo','Bugesera', 'Gatsibo', 'Kayonza',  'Kirehe',   'Ngoma','Nyagatare','Rwamagana','Gisagara',    'Huye', 'Kamonyi', 'Muhanga','Nyamagabe',  'Nyanza','Nyaruguru', 'Ruhango',  'Karongi','Ngororero',  'Nyabihu','Nyamasheke',   'Rubavu',   'Rusizi',  'Rutsiro'))
 
 x = df_adm2 %>% filter(project %like% 'CHAIN')
 
@@ -635,11 +636,11 @@ basemap = get_map(location = 'Kigali Rwanda',
 
 x = ggmap(basemap, darken = c(0.4,'black')) +
   # aes(x = long, y = lat)+
-  # geom_polygon(aes(x = long, y = lat, group = id),
+  # geom_polygon(aes(x = long, y = lat, group = group),
   # fill = grey30K, alpha = 0.3) +
   geom_polygon(aes(x = long, y = lat,
-                   group = id,fill = id, alpha = 0.3), data = y) +
-  geom_path(aes(x = long, y = lat,group = id),
+                   group = group,fill = id, alpha = 0.3), data = y) +
+  geom_path(aes(x = long, y = lat,group = group),
             color="white", size = 0.1, data= y) +
   # coord_equal() +
   theme_blank() +
