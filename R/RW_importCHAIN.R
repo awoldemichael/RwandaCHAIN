@@ -458,6 +458,42 @@ ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_byResult.pdf',
        dpi = 300)
 
 
+# Number of Results / IM:
+numResults_byMech = df_full %>% 
+  filter(isDistrict == 1,
+         project %like% 'CHAIN') %>% 
+  ungroup() %>% 
+  select(mechanism, Result) %>% 
+  distinct() %>% 
+  group_by(mechanism) %>% 
+  summarise(num = n()) %>% 
+  ungroup() %>% 
+  arrange((num))
+
+numResults_byMech$mechanism =
+  factor(numResults_byMech$mechanism, numResults_byMech$mechanism)
+
+ggplot(numResults_byMech, aes(y = num, 
+                              x = mechanism,
+                              label = num)) +
+  geom_bar(stat = 'identity', 
+           fill = grey50K) +
+  geom_text(nudge_y = -0.3, 
+           colour = 'white', size = 4,
+           family = 'Segoe UI') +
+  coord_flip() +
+  theme_xgrid()
+
+ggsave('~/Documents/USAID/Rwanda/CHAIN/plots/chain_numResults.pdf', 
+       width = 10, height = 4,
+       bg = 'transparent',
+       paper = 'special',
+       units = 'in',
+       useDingbats=FALSE,
+       compress = FALSE,
+       dpi = 300)
+
+
 # Comparison of where work on CHAIN ---------------------------------------
 
 colour1 = '#0868ac'
