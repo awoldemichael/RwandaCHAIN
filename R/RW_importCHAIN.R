@@ -179,17 +179,16 @@ df2 = df2 %>%
 
 # Add in the results data -----------------------------------------------------------------
 
-results = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/RF Map to Partners.xlsx')
+results = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/RF Map to Partners_LH.xlsx')
 codebook = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/Partner Lookup Table.xlsx')
-
-# Split Level column into intermediate results and outputs
 
 # Split the column based on the comma
 results = cSplit(results, 'Partners', ',') %>% 
-  gather(partnerNum, partner, -Level, -Result, -INWA) %>% # Convert from wide to long dataset
+  gather(partnerNum, partner, -output, -result, -output_ID, -subIR_ID, -INWA) %>% # Convert from wide to long dataset
   select(-partnerNum) %>%  # Remove artifact of split/gather
   filter(!is.na(partner)) %>% # Remove blank lines
-  mutate(INWA = ifelse(INWA %like% 'No INWA', 0, 1)) # Convert to binary
+  select(-INWA)
+  # mutate(INWA = ifelse(INWA %like% 'No INWA', 0, 1)) # Convert to binary
 
 
 # Translate the results into the full file
@@ -202,7 +201,7 @@ df_full = full_join(df_full, results, by = c("IP" = "Implementing Partner",
                                              "mechanism" = "Implementing Mechanism")) %>% 
   ungroup() %>% 
   group_by(Province, District, Sector, mechanism) %>% 
-  mutate(isSector = dense_rank(Result),
+  mutate(isSector = dense_rank(result),
          isSector = ifelse(is.na(isSector), 1,
                            ifelse(isSector == 1, 1, 0)))
 
