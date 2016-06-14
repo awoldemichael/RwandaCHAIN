@@ -1,7 +1,8 @@
 # Code to clean up Rwanda CHAIN IP data -----------------------------------
 # Laura Hughes, April 2016, lhughes@usaid.gov
 # Note: this code isn't impeccably documented, so please send questions 
-# if needed and I can clean it up. It's documented to make sense to me (hopefully) but probably makes no sense to others.
+# if needed and I can clean it up. It's documented to make sense to me 
+# (hopefully) but probably makes no sense to others.
 
 
 # Installing packages ------------------------------------------------
@@ -15,7 +16,7 @@
 # http://tlocoh.r-forge.r-project.org/mac_rgeos_rgdal.html
 # Reinstall R, since El Capitan has problems w/ saving to usr/lib 
 # Install geos: http://www.kyngchaos.com/ 
-# Then install :
+# Then install in R: install.packages('rgeos)
 
 library(llamar)
 library(splitstackshape) 
@@ -24,7 +25,7 @@ library(maptools)
 library(rgeos)
 library(raster)
 library(rasterVis)
-loadPkgs()
+llamar::loadPkgs()
 
 
 # Import and clean “raw” data -----------------------------------------------------
@@ -150,23 +151,23 @@ df2 = df %>%
          `Western Province` = ifelse(`Western Province` %like% 'All', 
                                      westDistricts, `Western Province`))
 
-# Split Nationwide
+# Split Nationwide into each individual district
 df2 = cSplit(df2, 'nationwide', ',')
 
 
-# Split Kigali
+# Split Kigali into individual districts
 df2 = cSplit(df2, 'Kigali Province', ',')
 
-# Split Northern
+# Split Northern into individual districts
 df2 = cSplit(df2, 'Northern Province', ',')
 
-# Split Western
+# Split Western into individual districts
 df2 = cSplit(df2, 'Western Province', ',')
 
-# Split Southern
+# Split Southern into individual districts
 df2 = cSplit(df2, 'Southern Province ', ',')
 
-# Split Eastern
+# Split Eastern into individual districts
 df2 = cSplit(df2, 'Eastern Province', ',')
 
 # Convert to a tidy data frame
@@ -180,6 +181,8 @@ df2 = df2 %>%
 
 results = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/RF Map to Partners.xlsx')
 codebook = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/Partner Lookup Table.xlsx')
+
+# Split Level column into intermediate results and outputs
 
 # Split the column based on the comma
 results = cSplit(results, 'Partners', ',') %>% 
