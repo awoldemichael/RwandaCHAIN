@@ -207,7 +207,7 @@ df_full = full_join(df_full, results, by = c("IP" = "Implementing Partner",
 
 
 # Save the results
-write.csv(df_full, '~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects.csv')
+write.csv(df_full, '~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects_2016-06-14.csv')
 
 ggplot(df2, aes(x = District)) +
   geom_bar(stat = 'count') +
@@ -468,22 +468,22 @@ df_CHAIN = df_full %>%
          project %like% 'CHAIN') %>% 
   select(-Sector, -Sect_ID, -isSector) %>% 
   group_by(Province, Prov_ID, 
-           District, Dist_ID, Result) %>% 
+           District, Dist_ID, result) %>% 
   summarise(numProj = n()) 
 
 orderCHAIN = df_CHAIN %>% 
   ungroup() %>% 
-  group_by(Result) %>%
+  group_by(result) %>%
   mutate(numProj = sum(numProj)) %>% 
   ungroup() %>% 
   arrange(desc(numProj)) %>% 
-  select(Result, numProj) %>% 
+  select(result, numProj) %>% 
   distinct()
 
 
 # Refactorize
-df_CHAIN$Result = factor(df_CHAIN$Result,
-                         levels = orderCHAIN$Result)
+df_CHAIN$result = factor(df_CHAIN$result,
+                         levels = orderCHAIN$result)
 
 rwCHAIN = right_join(rw.df, df_CHAIN, by = c("Prov_ID", "Dist_ID", "District"))
 
@@ -499,7 +499,7 @@ x = ggplot(rw.df) +
   geom_polygon(aes(group = group), #lakes
                fill = colourLakes,
                data = lakes.df) +
-  facet_wrap(~ Result) +
+  facet_wrap(~ result) +
   coord_equal() +
   theme_blank() +
   scale_fill_gradientn(colours = brewer.pal(9, 'YlGnBu')) +
@@ -524,7 +524,7 @@ numResults_byMech = df_full %>%
   filter(isDistrict == 1,
          project %like% 'CHAIN') %>% 
   ungroup() %>% 
-  select(mechanism, Result) %>% 
+  select(mechanism, result) %>% 
   distinct() %>% 
   group_by(mechanism) %>% 
   summarise(num = n()) %>% 
