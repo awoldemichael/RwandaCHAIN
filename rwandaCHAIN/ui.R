@@ -53,7 +53,7 @@ body <- dashboardBody(
                                               choices = c('all', unique(as.character(df$mechanism))))),
                      column(2, selectizeInput('filterIR', label = 'results', multiple = TRUE, 
                                               selected = 'all',
-                                              choices = c('all', unique(as.character(df$Result)))))
+                                              choices = c('all', unique(as.character(df$result)))))
             ),
             
             # -- plot maps --

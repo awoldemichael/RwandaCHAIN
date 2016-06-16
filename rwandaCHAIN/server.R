@@ -3,7 +3,8 @@ shinyServer(
     
     filterDF = reactive({
       df %>% 
-        filter(mechanism == input$filterIM) %>% 
+        filter(mechanism == input$filterIM,
+               result == input$filterIR) %>% 
         group_by(District) %>% 
         summarise(num = n())
     })
