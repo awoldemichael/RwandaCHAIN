@@ -188,7 +188,8 @@ codebook = read_excel('~/Documents/USAID/Rwanda/CHAIN/datain/Partner Lookup Tabl
 results = cSplit(results, 'Partners', ',') %>% 
   gather(partnerNum, partner, -output, -result, -output_ID, -subIR_ID, -INWA) %>% # Convert from wide to long dataset
   select(-partnerNum) %>%  # Remove artifact of split/gather
-  filter(!is.na(partner)) %>% # Remove blank lines
+  filter(!is.na(partner),
+         !partner %in% c('Education', 'PIO', 'RIPDD', 'RISWP')) %>% # Remove blank lines and things not yet procured
   select(-INWA)
   # mutate(INWA = ifelse(INWA %like% 'No INWA', 0, 1)) # Convert to binary
 
@@ -207,9 +208,13 @@ df_full = full_join(df_full, results, by = c("IP" = "Implementing Partner",
          isSector = ifelse(is.na(isSector), 1,
                            ifelse(isSector == 1, 1, 0)))
 
-df_adm2 = full_join(df2, rwAdm2, by = c("District" = "District"))
+df_adm2 = full_join(df2, rwAdm2, by = c("District" = "District")) %>% 
+  rename(Province = Prov_Name) %>% 
+  mutate(Province = str_replace_all(Province, ' Province', ''))
+
 df_adm2 = full_join(df_adm2, results, by = c("IP" = "Implementing Partner",
-                                             "mechanism" = "Implementing Mechanism"))
+                                             "mechanism" = "Implementing Mechanism")) %>% 
+  filter(!shortName %in% c('GAIN', 'EDC')) # No location data
 
 
 # Save the results
