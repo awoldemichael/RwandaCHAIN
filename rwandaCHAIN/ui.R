@@ -57,7 +57,6 @@ body <- dashboardBody(
             ),
             
             # -- plot maps --
-            fluidRow(plotOutput('smMult')),
             fluidRow(leafletOutput('main'))
             
     )
