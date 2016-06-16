@@ -32,12 +32,12 @@ rw.df = plyr::join(rw.points, rw_adm2@data, by="id")
 
 
 # Set limits for bounding box ---------------------------------------------
+spacer = 0.05
 
-
-minLon = rw@bbox['x', 'min']
-minLat = rw@bbox['y', 'min']
-maxLon = rw@bbox['x', 'max']
-maxLat = rw@bbox['y', 'max']
+minLon = rw@bbox['x', 'min'] * (1-spacer)
+minLat = rw@bbox['y', 'min'] * (1-spacer)
+maxLon = rw@bbox['x', 'max'] * (1+spacer)
+maxLat = rw@bbox['y', 'max'] * (1+spacer)
 
 # Source files ------------------------------------------------------------
 # source('indivRegion.R')
