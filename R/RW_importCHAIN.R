@@ -39,6 +39,8 @@ rw@data$id = rownames(rw@data)
 rw.points = fortify(rw, region="id")
 rw.df = plyr::join(rw.points, rw@data, by="id")
 
+rwAdm2 = rw@data
+
 # Admin 1
 setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin1/')
 rw_adm1 = readOGR(dsn=".", layer="Province_Boundary_2006")
@@ -205,8 +207,8 @@ df_full = full_join(df_full, results, by = c("IP" = "Implementing Partner",
          isSector = ifelse(is.na(isSector), 1,
                            ifelse(isSector == 1, 1, 0)))
 
-
-df_adm2 = full_join(df2, results, by = c("IP" = "Implementing Partner",
+df_adm2 = full_join(df2, rwAdm2, by = c("District" = "District"))
+df_adm2 = full_join(df_adm2, results, by = c("IP" = "Implementing Partner",
                                              "mechanism" = "Implementing Mechanism"))
 
 
