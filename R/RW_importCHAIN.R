@@ -190,7 +190,7 @@ results = cSplit(results, 'Partners', ',') %>%
   select(-partnerNum) %>%  # Remove artifact of split/gather
   filter(!is.na(partner),
          !partner %in% c('Education', 'PIO', 'RIPDD', 'RISWP')) %>% # Remove blank lines and things not yet procured
-  filter(!partner %in% c('GAIN', 'EDC')) %>% # No location data
+  filter(!partner %in% c('GAIN', 'ECD')) %>% # No location data
   select(-INWA)
   # mutate(INWA = ifelse(INWA %like% 'No INWA', 0, 1)) # Convert to binary
 
