@@ -15,6 +15,12 @@ library(RColorBrewer)
 
 
 # import data -------------------------------------------------------------
-df = read.csv('~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects.csv')
+# -- IP data --
+df = read.csv('~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects_adm2_2016-06-14.csv')
 
-rwanda = choroplethrAdmin1::get_admin1_regions('rwanda')
+# -- Map data --
+setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
+rw_adm2 = readOGR(dsn=".", layer="District_Boundary_2006")
+
+# Source files ------------------------------------------------------------
+source('indivRegion.R')
