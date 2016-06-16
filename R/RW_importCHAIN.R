@@ -190,6 +190,7 @@ results = cSplit(results, 'Partners', ',') %>%
   select(-partnerNum) %>%  # Remove artifact of split/gather
   filter(!is.na(partner),
          !partner %in% c('Education', 'PIO', 'RIPDD', 'RISWP')) %>% # Remove blank lines and things not yet procured
+  filter(!partner %in% c('GAIN', 'EDC')) %>% # No location data
   select(-INWA)
   # mutate(INWA = ifelse(INWA %like% 'No INWA', 0, 1)) # Convert to binary
 
@@ -213,8 +214,7 @@ df_adm2 = full_join(df2, rwAdm2, by = c("District" = "District")) %>%
   mutate(Province = str_replace_all(Province, ' Province', ''))
 
 df_adm2 = full_join(df_adm2, results, by = c("IP" = "Implementing Partner",
-                                             "mechanism" = "Implementing Mechanism")) %>% 
-  filter(!shortName %in% c('GAIN', 'EDC')) # No location data
+                                             "mechanism" = "Implementing Mechanism"))
 
 
 # Save the results
