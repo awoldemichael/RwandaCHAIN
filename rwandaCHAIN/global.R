@@ -12,7 +12,7 @@ library(llamar)
 library(choroplethr)
 library(choroplethrMaps)
 library(RColorBrewer)
-
+library(data.table)
 
 # import data -------------------------------------------------------------
 # -- IP data --
@@ -23,4 +23,4 @@ setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
 rw_adm2 = readOGR(dsn=".", layer="District_Boundary_2006")
 
 # Source files ------------------------------------------------------------
-source('indivRegion.R')
+# source('indivRegion.R')

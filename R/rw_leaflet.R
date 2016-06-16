@@ -3,7 +3,7 @@ library(leaflet)
 setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
 rw = readOGR(dsn=".", layer="District_Boundary_2006")
 
-rw@data = full_join(rw@data, filteredDF)
+rw_adm2@data = full_join(rw_adm2@data, filteredDF)
 
 pal <- colorNumeric("YlGnBu", domain = NULL)
 

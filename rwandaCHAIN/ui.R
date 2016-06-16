@@ -29,7 +29,7 @@ header <- dashboardHeader(
 # Body --------------------------------------------------------------------
 
 body <- dashboardBody(
-  fluidRow('West', indivRegionUI('west')),
+  # fluidRow('West', indivRegionUI('west')),
   # -- Each tab --
   # tabItems(
   #   
@@ -57,7 +57,7 @@ body <- dashboardBody(
             ),
             
             # -- plot maps --
-            fluidRow(plotOutput('main'))
+            fluidRow(leafletOutput('main'))
             
     )
   
