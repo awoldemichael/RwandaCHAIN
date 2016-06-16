@@ -16,21 +16,26 @@ state_popup <- paste0("<strong>Province: </strong>",
                       rw$num)
 
 
-spacer = 0.01
+spacer = 0.5
 
-minLon = rw@bbox['x', 'min'] * (1 - spacer)
-minLat = rw@bbox['y', 'min'] * (1 - spacer)
-maxLon = rw@bbox['x', 'max'] * (1 + spacer)
-maxLat = rw@bbox['y', 'max'] * (1 + spacer)
+minLon = rw@bbox['x', 'min']
+minLat = rw@bbox['y', 'min']
+maxLon = rw@bbox['x', 'max']
+maxLat = rw@bbox['y', 'max']
 
 
 leaflet(data = rw) %>%
-  addProviderTiles("Esri.WorldGrayCanvas") %>% 
-  addPolygons(fillColor = ~pal(num), 
+  addProviderTiles("Esri.WorldGrayCanvas", 
+                   options = tileOptions(minZoom = 8, maxZoom  = 11)) %>% 
+  addPolygons(fillColor = ~pal(Dist_ID), 
               fillOpacity = 0.8, 
               color = "#BDBDC3", 
               weight = 1,
               popup = state_popup)
+  
+  # setView(lng = (minLon + maxLon)/2, lat = (minLat + maxLat)/2, 
+          # zoom = 8, options = list('maxZoom = 9'))
+  setMaxBounds(minLon, minLat, maxLon, maxLat)
 
 rw@data = rw@data %>% filter(subIR_ID %like% '3')
 
