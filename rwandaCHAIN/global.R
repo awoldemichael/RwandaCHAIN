@@ -30,5 +30,14 @@ rw_adm2@data$id = rownames(rw_adm2@data)
 rw.points = fortify(rw_adm2, region="id")
 rw.df = plyr::join(rw.points, rw_adm2@data, by="id")
 
+
+# Set limits for bounding box ---------------------------------------------
+
+
+minLon = rw@bbox['x', 'min']
+minLat = rw@bbox['y', 'min']
+maxLon = rw@bbox['x', 'max']
+maxLat = rw@bbox['y', 'max']
+
 # Source files ------------------------------------------------------------
 # source('indivRegion.R')
