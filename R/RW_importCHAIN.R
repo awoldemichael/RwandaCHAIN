@@ -210,8 +210,7 @@ df_full = full_join(df_full, results, by = c("IP" = "Implementing Partner",
                            ifelse(isSector == 1, 1, 0)))
 
 df_adm2 = full_join(df2, rwAdm2, by = c("District" = "District")) %>% 
-  rename(Province = Prov_Name) %>% 
-  mutate(Province = str_replace_all(Province, ' Province', ''))
+  rename(Province = Prov_Name)
 
 df_adm2 = full_join(df_adm2, results, by = c("IP" = "Implementing Partner",
                                              "mechanism" = "Implementing Mechanism"))
