@@ -58,7 +58,7 @@ categPal = colorFactor(palette = c('#e41a1c', '#377eb8',
 # sizes -------------------------------------------------------------------
 widthMap = '750px'
 heightMap = '675px'
-circleScaling = 200
+circleScaling = 500
 
 
 # Source files ------------------------------------------------------------
