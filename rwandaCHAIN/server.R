@@ -48,7 +48,7 @@ shinyServer(
       rw_centroids = cbind(rw_centroids,
                            District = rw_adm2@data$District)
       
-      rw_centroids = full_join(rw_centroids, filteredDF)
+      rw_centroids = left_join(filteredDF, rw_centroids)
       
       
       # -- Info popup box -- 
