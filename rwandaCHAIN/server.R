@@ -6,8 +6,9 @@ shinyServer(
         filter(mechanism %in% input$filterMech, 
                result %in% input$filterResult,
                IP %in% input$filterIP) %>%
-        group_by(District) %>% 
-        summarise(num = n())
+        group_by(Province, District) %>% 
+        summarise(num = n(),
+                  ips = paste(IP, collapse = ' <br> '))
     })
     
     
@@ -33,7 +34,9 @@ shinyServer(
       info_popup <- paste0("<strong>District: </strong>", 
                            rw_adm2$District,
                            "<br><strong>number: </strong>", 
-                           rw_adm2$num)
+                           rw_adm2$num,
+                           "<br><strong>partners: </strong>",
+                           rw_adm2$ips)
       
       leaflet(data = rw_adm2) %>%
         addProviderTiles("Esri.WorldGrayCanvas",
@@ -58,10 +61,10 @@ shinyServer(
       #                                  }) 
       # )%>%
       addCircles(data = rw_centroids, lat = ~Lat, lng = ~Lon,
-                 radius = ~num*200,
+                 radius = ~num * circleScaling,
                  color = strokeColour, weight = 0.5,
                  popup = info_popup,
-                 fillColor = ~categPal(District), fillOpacity = 0.6)
+                 fillColor = ~categPal(Province), fillOpacity = 0.6)
     })
     
     # callModule(indivRegion, 'west', df, 'West')
