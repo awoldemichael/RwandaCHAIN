@@ -7,7 +7,7 @@ sidebar <- dashboardSidebar(
                      choices = mechanisms,
                      selected = mechanisms),
   # -- Select IPs --
-  checkboxGroupInput("IPList",label = 'partner', inline = FALSE,
+  checkboxGroupInput("filterIP",label = 'partner', inline = FALSE,
                      choices = ips,
                      selected = ips),
   
