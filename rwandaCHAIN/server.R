@@ -3,12 +3,17 @@ shinyServer(
     
     filterDF = reactive({
       df %>% 
+        # -- Filter out mechanisms based on user input --
         filter(mechanism %in% input$filterMech, 
                result %in% input$filterResult,
                IP %in% input$filterIP) %>%
+        # -- Remove the results data and compress --
+        select(Province, District, shortName) %>% 
+        distinct() %>% 
+        # -- Group by District and count --
         group_by(Province, District) %>% 
         summarise(num = n(),
-                  ips = paste(IP, collapse = ' <br> '))
+                  ips = paste('&bull;', shortName, collapse = ' <br> '))
     })
     
     
@@ -35,7 +40,7 @@ shinyServer(
                            rw_adm2$District,
                            "<br><strong>number: </strong>", 
                            rw_adm2$num,
-                           "<br><strong>partners: </strong>",
+                           "<br><strong>partners: </strong> <br>",
                            rw_adm2$ips)
       
       leaflet(data = rw_adm2) %>%
@@ -64,7 +69,7 @@ shinyServer(
                  radius = ~num * circleScaling,
                  color = strokeColour, weight = 0.5,
                  popup = info_popup,
-                 fillColor = ~categPal(Province), fillOpacity = 0.6)
+                 fillColor = ~categPal(Province), fillOpacity = 0.25)
     })
     
     # callModule(indivRegion, 'west', df, 'West')
