@@ -39,5 +39,13 @@ minLat = rw@bbox['y', 'min'] * (1-spacer)
 maxLon = rw@bbox['x', 'max'] * (1+spacer)
 maxLat = rw@bbox['y', 'max'] * (1+spacer)
 
+
+# Define colors for maps --------------------------------------------------
+baseColour = grey15K
+labelColour = grey90K
+strokeColour = grey90K
+# -- Define color palette --
+pal <- colorNumeric("YlGnBu", domain = NULL)
+
 # Source files ------------------------------------------------------------
 # source('indivRegion.R')
