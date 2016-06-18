@@ -54,5 +54,12 @@ strokeColour = grey90K
 categPal = colorFactor(palette = c('#e41a1c', '#377eb8', 
                        '#4daf4a', '#984ea3', '#ff7f00'), domain = provinces)
 
+
+# sizes -------------------------------------------------------------------
+widthMap = '750px'
+heightMap = '675px'
+circleScaling = 200
+
+
 # Source files ------------------------------------------------------------
 # source('indivRegion.R')
