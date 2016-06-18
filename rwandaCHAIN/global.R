@@ -9,8 +9,6 @@ library(shiny)
 library(shinydashboard)
 library(stringr)
 library(llamar)
-# library(choroplethr)
-# library(choroplethrMaps)
 library(rgdal)
 library(maptools)
 library(rgeos)
@@ -34,18 +32,24 @@ rw.df = plyr::join(rw.points, rw_adm2@data, by="id")
 # Set limits for bounding box ---------------------------------------------
 spacer = 0.05
 
-minLon = rw@bbox['x', 'min'] * (1-spacer)
-minLat = rw@bbox['y', 'min'] * (1-spacer)
-maxLon = rw@bbox['x', 'max'] * (1+spacer)
-maxLat = rw@bbox['y', 'max'] * (1+spacer)
+minLon = rw_adm2@bbox['x', 'min'] * (1-spacer)
+minLat = rw_adm2@bbox['y', 'min'] * (1-spacer)
+maxLon = rw_adm2@bbox['x', 'max'] * (1+spacer)
+maxLat = rw_adm2@bbox['y', 'max'] * (1+spacer)
 
+
+provinces = unique(rw_adm2$Prov_Name)
 
 # Define colors for maps --------------------------------------------------
 baseColour = grey15K
 labelColour = grey90K
 strokeColour = grey90K
+
 # -- Define color palette --
 pal <- colorNumeric("YlGnBu", domain = NULL)
+
+categPal = colorFactor(palette = c('#e41a1c', '#377eb8', 
+                       '#4daf4a', '#984ea3', '#ff7f00'), domain = provinces)
 
 # Source files ------------------------------------------------------------
 # source('indivRegion.R')
