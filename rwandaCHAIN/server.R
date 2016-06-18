@@ -76,7 +76,6 @@ shinyServer(
     
     
     # Bar graph by province ---------------------------------------------------
-    # mtcars %>% ggvis(x = ~cyl, y = ~mpg) %>% ggvis::layer_bars() %>% bind_shiny('numByProv') 
     reactive({
       df %>% 
         # -- Filter out mechanisms based on user input --
@@ -88,9 +87,43 @@ shinyServer(
         distinct() %>% 
         # -- Group by Province and count --
         group_by(Province) %>% 
-        summarise(num = n()) %>% 
-        ggvis(x = ~num, y = ~Province) %>% 
-        layer_rects(x2 = 0, height = band()) }) %>% 
+        summarise(num = n()) %>%
+        
+        # -- Plot bar graph --
+        ggvis(x = ~num, y = ~Province,
+              fill = ~Province) %>% 
+        layer_rects(x2 = 0, height = band(),
+                   fillOpacity := 0.6) %>% 
+        layer_text(text := ~num, 
+                   fontSize := 24,
+                   fontWeight := 300,
+                   fill := grey90K,
+                   dx := -15,
+                   dy := 15,
+                   align := 'right',
+                   baseline:="top",
+                   font := 'Segoe UI') %>% 
+        scale_ordinal('fill', range = colourProv) %>% 
+        # -- Axes --
+        add_axis('x', ticks = 5, grid = FALSE,
+                 title = '',
+                 properties = axis_props(
+                   axis = NA,
+                   majorTicks = NA,
+                   labels = NA)) %>% 
+                   # grid = list(stroke = grey60K, strokeWidth = 0.75),
+                   # labels = list(
+                     # fill = grey70K,
+                     # fontSize = 16))) %>% 
+        add_axis('y', grid = FALSE, title = '',
+                 properties = axis_props(
+                   labels = list(
+                     fill = grey70K,
+                     fontSize = 16),
+                   majorTicks = NA,
+                   axis = NA)) %>% 
+        hide_legend('fill')
+    }) %>% 
       bind_shiny('numByProv') 
     
   })

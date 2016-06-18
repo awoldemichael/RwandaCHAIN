@@ -48,8 +48,10 @@ baseColour = grey15K
 labelColour = grey90K
 strokeColour = grey90K
 
-categPal = colorFactor(palette = c('#e41a1c', '#377eb8', 
-                       '#4daf4a', '#984ea3', '#ff7f00'), domain = provinces)
+colourProv = c('#e41a1c', '#377eb8', 
+               '#4daf4a', '#984ea3', '#ff7f00')
+
+categPal = colorFactor(palette = colourProv, domain = provinces)
 
 
 # sizes -------------------------------------------------------------------
