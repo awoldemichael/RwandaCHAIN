@@ -17,22 +17,6 @@ shinyServer(
     })
     
     
-    filter_byProv = reactive({
-      df %>% 
-        # -- Filter out mechanisms based on user input --
-        filter(mechanism %in% input$filterMech, 
-               result %in% input$filterResult,
-               IP %in% input$filterIP) %>%
-        # -- Remove the results data and compress --
-        select(Province, District, shortName, IP, mechanism) %>% 
-        distinct() %>% 
-        # -- Group by Province and count --
-        group_by(Province) %>% 
-        summarise(num = n(),
-                  ips = paste('&bull;', mechanism, collapse = ' <br> '))
-    })
-    
-    
     
     output$main = renderLeaflet({
       
@@ -91,6 +75,24 @@ shinyServer(
     # callModule(indivRegion, 'west', df, 'West')
     
     
-    
+    # Bar graph by province ---------------------------------------------------
+    # mtcars %>% ggvis(x = ~cyl, y = ~mpg) %>% ggvis::layer_bars() %>% bind_shiny('numByProv') 
+    reactive({
+      df %>% 
+        # -- Filter out mechanisms based on user input --
+        filter(mechanism %in% input$filterMech, 
+               result %in% input$filterResult,
+               IP %in% input$filterIP) %>%
+        # -- Remove the results data and compress --
+        select(Province, District, shortName, IP, mechanism) %>% 
+        distinct() %>% 
+        # -- Group by Province and count --
+        group_by(Province) %>% 
+        summarise(num = n()) %>% 
+        ggvis(x = ~num, y = ~Province) %>% 
+        layer_rects(x2 = 0, height = band()) }) %>% 
+      bind_shiny('numByProv') 
     
   })
+
+
