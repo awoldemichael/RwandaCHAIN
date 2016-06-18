@@ -37,7 +37,7 @@ shinyServer(
       
       leaflet(data = rw_adm2) %>%
         addProviderTiles("Esri.WorldGrayCanvas",
-                         options = tileOptions(minZoom = 8, maxZoom  = 11)) %>%
+                         options = tileOptions(minZoom = 9, maxZoom  = 11)) %>%
         setMaxBounds(minLon, minLat, maxLon, maxLat) %>%
         addPolygons(fillColor = ~categPal(Prov_Name),
                     fillOpacity = 0.2,

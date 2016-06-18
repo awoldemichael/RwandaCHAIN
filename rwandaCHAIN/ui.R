@@ -76,7 +76,8 @@ body <- dashboardBody(
   # ),
   
   # -- plot maps --
-  fluidRow(leafletOutput('main'))
+  fluidRow(leafletOutput('main', height = '675px',
+                         width = '750px'))
   
 )
 
