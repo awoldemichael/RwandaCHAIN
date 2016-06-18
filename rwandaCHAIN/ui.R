@@ -76,6 +76,7 @@ body <- dashboardBody(
   # ),
   
   # -- plot maps --
+  fluidRow(h3('Number of Partners by District')),
   fluidRow(leafletOutput('main', height = heightMap,
                          width = widthMap))
   
