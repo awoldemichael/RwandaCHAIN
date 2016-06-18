@@ -1,7 +1,7 @@
 shinyServer(
   function(input, output, session) {
     
-    filterDF = reactive({
+    filter_byDist = reactive({
       df %>% 
         # -- Filter out mechanisms based on user input --
         filter(mechanism %in% input$filterMech, 
@@ -17,10 +17,26 @@ shinyServer(
     })
     
     
+    filter_byProv = reactive({
+      df %>% 
+        # -- Filter out mechanisms based on user input --
+        filter(mechanism %in% input$filterMech, 
+               result %in% input$filterResult,
+               IP %in% input$filterIP) %>%
+        # -- Remove the results data and compress --
+        select(Province, District, shortName, IP, mechanism) %>% 
+        distinct() %>% 
+        # -- Group by Province and count --
+        group_by(Province) %>% 
+        summarise(num = n(),
+                  ips = paste('&bull;', mechanism, collapse = ' <br> '))
+    })
+    
+    
     
     output$main = renderLeaflet({
       
-      filteredDF = filterDF()
+      filteredDF = filter_byDist()
       
       
       rw_adm2@data = full_join(rw_adm2@data, filteredDF)
