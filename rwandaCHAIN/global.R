@@ -15,12 +15,11 @@ library(leaflet)
 
 # import data -------------------------------------------------------------
 # -- IP data --
-df = read.csv('~/Documents/USAID/Rwanda/CHAIN/dataout/RW_projects_adm2_2016-06-14.csv',
+df = read.csv('data/RW_projects_adm2_2016-06-14.csv',
               stringsAsFactors = FALSE)
 
 # -- Map data --
-setwd('~/Documents/USAID/Rwanda/data in/Rwanda_Admin2/')
-rw_adm2 = readOGR(dsn=".", layer="District_Boundary_2006")
+rw_adm2 = readOGR(path.expand("data/"), layer="District_Boundary_2006")
 
 rw_adm2@data$id = rownames(rw_adm2@data)
 rw.points = fortify(rw_adm2, region="id")
