@@ -8,12 +8,12 @@ shinyServer(
                result %in% input$filterResult,
                IP %in% input$filterIP) %>%
         # -- Remove the results data and compress --
-        select(Province, District, shortName) %>% 
+        select(Province, District, shortName, IP, mechanism) %>% 
         distinct() %>% 
         # -- Group by District and count --
         group_by(Province, District) %>% 
         summarise(num = n(),
-                  ips = paste('&bull;', shortName, collapse = ' <br> '))
+                  ips = paste('&bull;', mechanism, collapse = ' <br> '))
     })
     
     
@@ -40,7 +40,7 @@ shinyServer(
                            rw_adm2$District,
                            "<br><strong>number: </strong>", 
                            rw_adm2$num,
-                           "<br><strong>partners: </strong> <br>",
+                           "<br><strong>mechanisms: </strong> <br>",
                            rw_adm2$ips)
       
       leaflet(data = rw_adm2) %>%
