@@ -4,16 +4,13 @@
 # Set up the app ----------------------------------------------------------
 library(dplyr)
 library(tidyr)
+library(ggvis)
 library(ggplot2)
 library(shiny)
 library(shinydashboard)
-library(stringr)
 library(llamar)
 library(rgdal)
 library(maptools)
-library(rgeos)
-library(RColorBrewer)
-library(data.table)
 library(leaflet)
 
 # import data -------------------------------------------------------------
