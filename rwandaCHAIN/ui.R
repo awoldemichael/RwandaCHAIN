@@ -1,6 +1,13 @@
 # Define sidebar for inputs -----------------------------------------------
 
 sidebar <- dashboardSidebar(
+  # -- Select results --
+  checkboxGroupInput('filterResult',label = 'intended result', inline = FALSE,
+                     choices = c('improved health practices' = 'Increased awareness of, access to, and demand for high-impact health practices',
+                                 'vulnerable population protection' = 'Improved protection of vulnerable populations against adverse circumstances',
+                                 'improved nutrition' = 'Increase nutrition knowledge and adoption of appropriate nutrition and hygiene practices',
+                                 'CSO/GOR performance' = 'Improved performance and engagement by CSOs and GOR entities'),
+                     selected = unique(df$result)),
   
   # -- Select mechanisms --
   checkboxGroupInput('filterMech',label = 'mechanism', inline = FALSE,
@@ -9,19 +16,13 @@ sidebar <- dashboardSidebar(
   # -- Select IPs --
   checkboxGroupInput("filterIP",label = 'partner', inline = FALSE,
                      choices = ips,
-                     selected = ips),
+                     selected = ips)
   
   # selectizeInput('filterIP', label = 'partner', multiple = TRUE,
   #                selected = ips,
   #                choices = ips),
   
-  # -- Select results --
-  checkboxGroupInput('filterResult',label = 'intended result', inline = FALSE,
-                     choices = c('improved health practices' = 'Increased awareness of, access to, and demand for high-impact health practices',
-                                 'vulnerable population protection' = 'Improved protection of vulnerable populations against adverse circumstances',
-                                 'improved nutrition' = 'Increase nutrition knowledge and adoption of appropriate nutrition and hygiene practices',
-                                 'CSO/GOR performance' = 'Improved performance and engagement by CSOs and GOR entities'),
-                     selected = unique(df$result))
+  
   
   # -- Sidebar icons --
   # sidebarMenu(
@@ -76,7 +77,7 @@ body <- dashboardBody(
   # ),
   
   # -- plot maps --
-  fluidRow(h3('Number of Partners by District')),
+  fluidRow(h3('Number of Mechanisms by District')),
   fluidRow(leafletOutput('main', height = heightMap,
                          width = widthMap))
   
