@@ -3,9 +3,10 @@ shinyServer(
     
     filterDF = reactive({
       df %>% 
-        filter(mechanism == input$filterIM,
-               result == input$filterIR) %>% 
-        group_by(District, IP) %>% 
+        filter(mechanism %in% input$filterMech, 
+               result %in% input$filterResult,
+               IP %in% input$filterIP) %>%
+        group_by(District) %>% 
         summarise(num = n())
     })
     
@@ -14,6 +15,7 @@ shinyServer(
     output$main = renderLeaflet({
       
       filteredDF = filterDF()
+      
       
       rw_adm2@data = full_join(rw_adm2@data, filteredDF)
       
@@ -28,43 +30,43 @@ shinyServer(
       
       
       # -- Info popup box -- 
-      info_popup <- paste0("<strong>Province: </strong>", 
-                           rw_adm2$Prov_Name, 
-                           "<br><strong>District: </strong>", 
+      info_popup <- paste0("<strong>District: </strong>", 
                            rw_adm2$District,
                            "<br><strong>number: </strong>", 
                            rw_adm2$num)
       
       leaflet(data = rw_adm2) %>%
-        addProviderTiles("Esri.WorldGrayCanvas", 
-                         options = tileOptions(minZoom = 8, maxZoom  = 11)) %>% 
-        setMaxBounds(minLon, minLat, maxLon, maxLat) %>% 
-        addPolygons(fillColor = baseColour, 
-                    fillOpacity = 0.8, 
-                    color = "#BDBDC3", 
+        addProviderTiles("Esri.WorldGrayCanvas",
+                         options = tileOptions(minZoom = 8, maxZoom  = 11)) %>%
+        setMaxBounds(minLon, minLat, maxLon, maxLat) %>%
+        addPolygons(fillColor = ~categPal(Prov_Name),
+                    fillOpacity = 0.2,
+                    color = grey90K,
                     weight = 1,
-                    popup = info_popup) %>% 
-        addCircles(data = rw_centroids, lat = ~Lat, lng = ~Lon,
-                   radius = ~num*200, 
-                   color = strokeColour, weight = 0.5,
-                   fillColor = ~pal(num), fillOpacity = 1,
-                   label = ~District,
-                   labelOptions = lapply(1:nrow(rw_centroids), function(x) {
-                     labelOptions(opacity=0.9, noHide = TRUE)
-                   })
-        )
-      
+                    popup = info_popup) %>%
+        # addMarkers(data = rw_centroids, lng = ~Lon, lat = ~Lat,
+        #            label = ~District,
+        #            icon = makeIcon(
+        #              iconUrl = "http://leafletjs.com/docs/images/leaf-green.png",
+        #              iconWidth = 01, iconHeight = 01,
+        #              iconAnchorX = 0, iconAnchorY = 0),
+        #            labelOptions = lapply(1:nrow(rw_centroids), 
+        #                                  function(x) {
+        #                                    labelOptions(opacity = 1, noHide = TRUE,
+        #                                                 direction = 'auto',
+        #                                                 offset = c(0, 0))
+      #                                  }) 
+      # )%>%
+      addCircles(data = rw_centroids, lat = ~Lat, lng = ~Lon,
+                 radius = ~num*200,
+                 color = strokeColour, weight = 0.5,
+                 popup = info_popup,
+                 fillColor = ~categPal(District), fillOpacity = 0.6)
     })
     
     # callModule(indivRegion, 'west', df, 'West')
     
     
-    leaflet(rw_centroids) %>% addTiles() %>%
-      addCircleMarkers(lng = ~Lon, lat = ~Lat,
-                       label = ~District,
-                       labelOptions = lapply(1:nrow(rw_centroids), function(x) {
-                         labelOptions(opacity = 1, noHide = T)
-                       })
-      )
+    
     
   })
