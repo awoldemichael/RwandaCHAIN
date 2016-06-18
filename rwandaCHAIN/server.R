@@ -43,6 +43,13 @@ shinyServer(
                            "<br><strong>mechanisms: </strong> <br>",
                            rw_adm2$ips)
       
+      info_popup_circles <- paste0("<strong>District: </strong>", 
+                           rw_centroids$District,
+                           "<br><strong>number: </strong>", 
+                           rw_centroids$num,
+                           "<br><strong>mechanisms: </strong> <br>",
+                           rw_centroids$ips)
+      
       leaflet(data = rw_adm2) %>%
         addProviderTiles("Esri.WorldGrayCanvas",
                          options = tileOptions(minZoom = 9, maxZoom  = 11)) %>%
@@ -68,8 +75,8 @@ shinyServer(
       addCircles(data = rw_centroids, lat = ~Lat, lng = ~Lon,
                  radius = ~num * circleScaling,
                  color = strokeColour, weight = 0.5,
-                 popup = info_popup,
-                 fillColor = ~categPal(Province), fillOpacity = 0.25)
+                 popup = info_popup_circles,
+                 fillColor = ~categPal(Province), fillOpacity = 0.25) 
     })
     
     # callModule(indivRegion, 'west', df, 'West')
@@ -110,11 +117,11 @@ shinyServer(
                  properties = axis_props(
                    axis = NA,
                    majorTicks = NA,
-                   labels = NA)) %>% 
-                   # grid = list(stroke = grey60K, strokeWidth = 0.75),
-                   # labels = list(
-                     # fill = grey70K,
-                     # fontSize = 16))) %>% 
+                   labels = NA)) %>%
+        #            # grid = list(stroke = grey60K, strokeWidth = 0.75),
+        #            # labels = list(
+        #              # fill = grey70K,
+        #              # fontSize = 16))) %>% 
         add_axis('y', grid = FALSE, title = '',
                  properties = axis_props(
                    labels = list(
