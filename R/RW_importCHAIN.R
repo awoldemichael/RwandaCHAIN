@@ -213,7 +213,8 @@ df_adm2 = full_join(df2, rwAdm2, by = c("District" = "District")) %>%
   rename(Province = Prov_Name)
 
 df_adm2 = full_join(df_adm2, results, by = c("IP" = "Implementing Partner",
-                                             "mechanism" = "Implementing Mechanism"))
+                                             "mechanism" = "Implementing Mechanism")) %>% 
+  select(-manager)
 
 
 # Save the results
