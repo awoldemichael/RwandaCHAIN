@@ -84,7 +84,7 @@ shinyServer(
                result %in% input$filterResult,
                IP %in% input$filterIP) %>%
         # -- Remove the results data and compress --
-        select(Province, District, shortName, IP, mechanism) %>% 
+        select(Province, shortName, IP, mechanism) %>% 
         distinct() %>% 
         # -- Group by Province and count --
         group_by(Province) %>% 
