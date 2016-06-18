@@ -29,6 +29,9 @@ header <- dashboardHeader(
 # Body --------------------------------------------------------------------
 
 body <- dashboardBody(
+  # -- Import custom CSS --
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "leaflet.css")),
   # fluidRow('West', indivRegionUI('west')),
   # -- Each tab --
   # tabItems(
