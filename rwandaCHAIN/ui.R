@@ -3,7 +3,7 @@
 sidebar <- dashboardSidebar(
   
   # -- Select mechanisms --
-  checkboxGroupInput("mechList",label = 'mechanism', inline = FALSE,
+  checkboxGroupInput('filterMech',label = 'mechanism', inline = FALSE,
                      choices = mechanisms,
                      selected = mechanisms),
   # -- Select IPs --
@@ -11,8 +11,12 @@ sidebar <- dashboardSidebar(
                      choices = ips,
                      selected = ips),
   
+  # selectizeInput('filterIP', label = 'partner', multiple = TRUE,
+  #                selected = ips,
+  #                choices = ips),
+  
   # -- Select results --
-  checkboxGroupInput("resultsList",label = 'intended result', inline = FALSE,
+  checkboxGroupInput('filterResult',label = 'intended result', inline = FALSE,
                      choices = c('improved health practices' = 'Increased awareness of, access to, and demand for high-impact health practices',
                                  'vulnerable population protection' = 'Improved protection of vulnerable populations against adverse circumstances',
                                  'improved nutrition' = 'Increase nutrition knowledge and adoption of appropriate nutrition and hygiene practices',
@@ -58,18 +62,18 @@ body <- dashboardBody(
   #   tabItem(tabName = 'main',            
   #           
   # -- Filters for the map --
-  fluidRow(column(2, radioButtons('comparison', label = NULL, choices = c('by partner' = 'IP', 'by result' = 'IR'),
-                                  selected = 'IP', inline = TRUE)),
-           column(2, selectizeInput('filterIP', label = 'partner', multiple = TRUE,
-                                    selected = 'all',
-                                    choices = c('all', unique(as.character(df$IP))))),
-           column(2, selectizeInput('filterIM', label = 'mechanism', multiple = TRUE, 
-                                    selected = 'all',
-                                    choices = c('all', unique(as.character(df$mechanism))))),
-           column(2, selectizeInput('filterIR', label = 'results', multiple = TRUE, 
-                                    selected = 'all',
-                                    choices = c('all', unique(as.character(df$result)))))
-  ),
+  # fluidRow(column(2, radioButtons('comparison', label = NULL, choices = c('by partner' = 'IP', 'by result' = 'IR'),
+  # selected = 'IP', inline = TRUE)),
+  # column(2, selectizeInput('filterIP', label = 'partner', multiple = TRUE,
+  # selected = 'all',
+  # choices = c('all', unique(as.character(df$IP))))),
+  # column(2, selectizeInput('filterIM', label = 'mechanism', multiple = TRUE, 
+  # selected = 'all',
+  # choices = c('all', unique(as.character(df$mechanism))))),
+  # column(2, selectizeInput('filterIR', label = 'results', multiple = TRUE, 
+  # selected = 'all',
+  # choices = c('all', unique(as.character(df$result)))))
+  # ),
   
   # -- plot maps --
   fluidRow(leafletOutput('main'))
