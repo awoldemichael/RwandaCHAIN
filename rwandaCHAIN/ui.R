@@ -81,7 +81,8 @@ body <- dashboardBody(
          fluidRow(leafletOutput('main', height = heightMap,
                                 width = widthMap))),
   column(5, fluidRow(h3('Number of Unique Mechanisms by Province')),
-         fluidRow(ggvisOutput('numByProv')))
+         fluidRow(ggvisOutput('numByProv'))),
+  fluidRow(imageOutput('footer'))
   
 )
 

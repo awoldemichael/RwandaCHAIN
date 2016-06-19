@@ -133,6 +133,18 @@ shinyServer(
     }) %>% 
       bind_shiny('numByProv') 
     
+    # footer image ------------------------------------------------------------
+    
+    output$footer = renderImage({
+      return(list(
+        src = "img/footer_Rw.png",
+        width = '100%',
+        filetype = "image/png",
+        alt = "Plots from USAID's GeoCenter"
+      ))
+    }, deleteFile = FALSE)
   })
+
+
 
 
