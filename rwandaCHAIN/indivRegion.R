@@ -32,7 +32,7 @@ indivRegion = function(input, output, session, df, selRegion,
            result %in% results,
            IP %in% ips) %>%
       # -- Group by District and count --
-      group_by(Province, District, shortName, subIR_ID) %>% 
+      group_by(Province, District, shortName) %>% 
       summarise(num = n(),
                 ips = paste('&bull;', mechanism, collapse = ' <br> '))
   })
@@ -61,16 +61,52 @@ indivRegion = function(input, output, session, df, selRegion,
   
   
   output$indivRegion = renderPlot({
-    filteredDF = filter_byResult()
+    filteredDF = filter_byResult() 
     
+    filteredDF = filteredDF%>%
+      filter(subIR_ID %like% '2'
+             ) %>% 
+      ungroup() %>%
+      group_by(District, shortName) %>%
+      arrange(desc(num))
     
-    ggplot(filteredDF, aes(x = subIR_ID,
+    filteredDF$shortName = factor(filteredDF$shortName,
+                                  levels = filteredDF$shortName) 
+    
+    ggplot(filteredDF, aes(x = District,
                            y = shortName,
                            fill = num)) +
-      geom_tile() +
-      facet_wrap(~District) +
+      geom_tile(colour = 'white', size = 0.25) +
       theme_xylab() +
-      scale_fill_gradientn(colours = brewer.pal(9, 'Blues'))
+      scale_fill_gradientn(colours = brewer.pal(9, 'Blues')[4:9])
+    
+    filteredDF = df %>%
+      # -- Filter out mechanisms based on user input --
+      filter(Province == 'Western Province') %>%     # -- Group by District and count --
+      group_by(Province, District, shortName, subIR_ID) %>%
+      summarise(num = n(),
+                ips = paste('&bull;', mechanism, collapse = ' <br> ')) %>% 
+      ungroup() %>% 
+      group_by(District, shortName) 
+    
+    f =   df %>%
+      # -- Filter out mechanisms based on user input --
+      filter(Province == 'Western Province') %>%
+      # -- Group by District and count --
+      group_by(Province, District, shortName) %>%
+      summarise(num = n(),
+                subIR_ID = 'total', ips='')
+    
+    filteredDF = rbind(filteredDF, f)
+    
+
+    # ggplot(f, aes(x = 1,
+    #                        y = shortName,
+    #                        fill = num)) +
+    #   geom_tile(colour = 'white', size = 0.25) +
+    #   facet_wrap(~District) +
+    #   theme_xylab() +
+    #   scale_fill_gradientn(colours = brewer.pal(9, 'Blues')[4:9])
     
   })
   
