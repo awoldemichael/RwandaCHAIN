@@ -49,43 +49,27 @@ body <- dashboardBody(
   # -- Import custom CSS --
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "leaflet.css")),
-  # fluidRow('West', indivRegionUI('west')),
+  
+  
   # -- Each tab --
-  # tabItems(
-  #   
-  #   # -- Individual region plots --
-  #   # tabItem(tabName = 'indivTab',
-  #           # fluidRow("hjf"
-  #             # tabBox(
-  #               # tabPanel('West', 
-  #                        # indivRegionUI('west'))
-  #             )),
-  #   tabItem(tabName = 'main',            
-  #           
-  # -- Filters for the map --
-  # fluidRow(column(2, radioButtons('comparison', label = NULL, choices = c('by partner' = 'IP', 'by result' = 'IR'),
-  # selected = 'IP', inline = TRUE)),
-  # column(2, selectizeInput('filterIP', label = 'partner', multiple = TRUE,
-  # selected = 'all',
-  # choices = c('all', unique(as.character(df$IP))))),
-  # column(2, selectizeInput('filterIM', label = 'mechanism', multiple = TRUE, 
-  # selected = 'all',
-  # choices = c('all', unique(as.character(df$mechanism))))),
-  # column(2, selectizeInput('filterIR', label = 'results', multiple = TRUE, 
-  # selected = 'all',
-  # choices = c('all', unique(as.character(df$result)))))
-  # ),
-  
-  # -- plot maps --
-  column(7, fluidRow(h3('Number of Mechanisms by District')),
-         fluidRow(leafletOutput('main', height = heightMap,
-                                width = widthMap))),
-  column(5, fluidRow(h3('Number of Unique Mechanisms by Province')),
-         fluidRow(ggvisOutput('numByProv'))),
-  fluidRow(imageOutput('footer'))
-  
-)
-
+  tabsetPanel(
+    
+    # -- Individual region plots --
+    tabPanel('indiv',
+             fluidRow('West', indivRegionUI('west'))),
+    
+    tabPanel('by district',
+             
+             # -- plot maps --
+             column(7, fluidRow(h3('Number of Mechanisms by District')),
+                    fluidRow(leafletOutput('main', height = heightMap,
+                                           width = widthMap))),
+             column(5, fluidRow(h3('Number of Unique Mechanisms by Province')),
+                    fluidRow(ggvisOutput('numByProv'))),
+             fluidRow(imageOutput('footer'))
+             
+    )
+  ))
 
 # Dashboard definition (main call) ----------------------------------------
 

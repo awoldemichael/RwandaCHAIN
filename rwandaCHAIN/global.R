@@ -60,4 +60,4 @@ circleScaling = 1000
 
 
 # Source files ------------------------------------------------------------
-# source('indivRegion.R')
+source('indivRegion.R')

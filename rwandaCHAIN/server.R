@@ -1,6 +1,8 @@
 shinyServer(
   function(input, output, session) {
     
+    # filter function ---------------------------------------------------------
+    
     filter_byDist = reactive({
       df %>% 
         # -- Filter out mechanisms based on user input --
@@ -16,6 +18,8 @@ shinyServer(
                   ips = paste('&bull;', mechanism, collapse = ' <br> '))
     })
     
+    # individual tabs ---------------------------------------------------------
+    callModule(indivRegion, 'west', df, 'West')
     
     # leaflet plot ------------------------------------------------------------
     
@@ -142,6 +146,9 @@ shinyServer(
       ))
     }, deleteFile = FALSE)
   })
+
+
+
 
 
 
