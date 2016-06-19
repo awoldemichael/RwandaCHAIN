@@ -55,8 +55,16 @@ body <- dashboardBody(
   tabsetPanel(
     
     # -- Individual region plots --
-    tabPanel('indiv',
-             fluidRow('West', indivRegionUI('west'))),
+    tabPanel('Eastern Province',
+             fluidRow(indivRegionUI('east'))),
+    tabPanel('Kigali City',
+             fluidRow(indivRegionUI('kigali'))),
+    tabPanel('Northern Province',
+             fluidRow(indivRegionUI('north'))),
+    tabPanel('Southern Province',
+             fluidRow(indivRegionUI('south'))),
+    tabPanel('Western Province',
+             fluidRow(indivRegionUI('west'))),
     
     tabPanel('by district',
              
