@@ -28,9 +28,9 @@ indivRegion = function(input, output, session, df, selRegion,
     df %>% 
     # -- Filter out mechanisms based on user input --
     filter(Province == selRegion, 
-           mechanism %in% mechanisms,
-           result %in% results,
-           IP %in% ips) %>%
+           mechanism %in% mechanisms(),
+           result %in% results(),
+           IP %in% ips()) %>%
       # -- Group by District and count --
       group_by(Province, District, shortName) %>% 
       summarise(num = n(),

@@ -12,6 +12,7 @@ library(llamar)
 library(rgdal)
 library(maptools)
 library(leaflet)
+library(RColorBrewer)
 
 # import data -------------------------------------------------------------
 # -- IP data --

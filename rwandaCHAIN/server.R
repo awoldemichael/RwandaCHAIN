@@ -20,15 +20,24 @@ shinyServer(
     
     # individual tabs ---------------------------------------------------------
     callModule(indivRegion, 'east', df, 'Eastern Province', 
-               input$filterIP, input$filterResult, input$filterMech)
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
+    
     callModule(indivRegion, 'kigali', df, 'Kigali City', 
-               input$filterIP, input$filterResult, input$filterMech)
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
+    
     callModule(indivRegion, 'north', df, 'Northern Province', 
-               input$filterIP, input$filterResult, input$filterMech)
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
+    
     callModule(indivRegion, 'south', df, 'Southern Province', 
-               input$filterIP, input$filterResult, input$filterMech)
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
+    
     callModule(indivRegion, 'west', df, 'Western Province', 
-               input$filterIP, input$filterResult, input$filterMech)
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
     
     # leaflet plot ------------------------------------------------------------
     
