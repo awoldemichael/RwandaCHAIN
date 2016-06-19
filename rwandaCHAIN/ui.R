@@ -3,10 +3,10 @@
 sidebar <- dashboardSidebar(
   # -- Select results --
   checkboxGroupInput('filterResult',label = 'intended result', inline = FALSE,
-                     choices = c('improved health practices' = 'Increased awareness of, access to, and demand for high-impact health practices',
-                                 'vulnerable population protection' = 'Improved protection of vulnerable populations against adverse circumstances',
-                                 'improved nutrition' = 'Increase nutrition knowledge and adoption of appropriate nutrition and hygiene practices',
-                                 'CSO/GOR performance' = 'Improved performance and engagement by CSOs and GOR entities'),
+                     choices = c('improved health practices (subpurpose 1)' = 'Increased awareness of, access to, and demand for high-impact health practices',
+                                 'vulnerable population protection (subpurpose 2)' = 'Improved protection of vulnerable populations against adverse circumstances',
+                                 'improved nutrition (subpurpose 3)' = 'Increase nutrition knowledge and adoption of appropriate nutrition and hygiene practices',
+                                 'CSO/GOR performance (subpurpose 4)' = 'Improved performance and engagement by CSOs and GOR entities'),
                      selected = unique(df$result)),
   
   # -- Select mechanisms --

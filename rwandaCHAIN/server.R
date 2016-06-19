@@ -17,6 +17,7 @@ shinyServer(
     })
     
     
+    # leaflet plot ------------------------------------------------------------
     
     output$main = renderLeaflet({
       
@@ -38,18 +39,15 @@ shinyServer(
       # -- Info popup box -- 
       info_popup <- paste0("<strong>District: </strong>", 
                            rw_adm2$District,
-                           "<br><strong>number: </strong>", 
-                           rw_adm2$num,
                            "<br><strong>mechanisms: </strong> <br>",
                            rw_adm2$ips)
       
       info_popup_circles <- paste0("<strong>District: </strong>", 
                            rw_centroids$District,
-                           "<br><strong>number: </strong>", 
-                           rw_centroids$num,
                            "<br><strong>mechanisms: </strong> <br>",
                            rw_centroids$ips)
       
+      # -- leaflet map --
       leaflet(data = rw_adm2) %>%
         addProviderTiles("Esri.WorldGrayCanvas",
                          options = tileOptions(minZoom = 9, maxZoom  = 11)) %>%
@@ -59,19 +57,19 @@ shinyServer(
                     color = grey90K,
                     weight = 1,
                     popup = info_popup) %>%
-        # addMarkers(data = rw_centroids, lng = ~Lon, lat = ~Lat,
-        #            label = ~District,
-        #            icon = makeIcon(
-        #              iconUrl = "http://leafletjs.com/docs/images/leaf-green.png",
-        #              iconWidth = 01, iconHeight = 01,
-        #              iconAnchorX = 0, iconAnchorY = 0),
-        #            labelOptions = lapply(1:nrow(rw_centroids), 
-        #                                  function(x) {
-        #                                    labelOptions(opacity = 1, noHide = TRUE,
-        #                                                 direction = 'auto',
-        #                                                 offset = c(0, 0))
-      #                                  }) 
-      # )%>%
+        addMarkers(data = rw_centroids, lng = ~Lon, lat = ~Lat,
+                   label = ~as.character(num),
+                 icon = makeIcon(
+                   iconUrl = "img/footer_Rw.png",
+                   iconWidth = 1, iconHeight = 1,
+                   iconAnchorX = 0, iconAnchorY = 0),
+                 labelOptions = lapply(1:nrow(rw_centroids),
+                                       function(x) {
+                                         labelOptions(opacity = 1, noHide = TRUE,
+                                                      direction = 'auto',
+                                                      offset = c(-10, -12))
+                                       })
+      )%>%
       addCircles(data = rw_centroids, lat = ~Lat, lng = ~Lon,
                  radius = ~num * circleScaling,
                  color = strokeColour, weight = 0.5,
@@ -144,6 +142,8 @@ shinyServer(
       ))
     }, deleteFile = FALSE)
   })
+
+
 
 
 
