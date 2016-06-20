@@ -84,7 +84,7 @@ indivResult = function(input, output, session, df, selResult,
   })
   
   output$title = renderPrint({
-    h2(paste0('sub IR ', selResult))
+    h3(subIRs[subIRs %like% selResult])
   })
   # -- fin --
 }
