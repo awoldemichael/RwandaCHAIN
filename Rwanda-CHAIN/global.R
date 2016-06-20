@@ -85,7 +85,7 @@ widthMap = '750px'
 heightMap = '675px'
 widthDot = '450px'
 circleScaling = 1000
-
+yAxis_pad = 2.25
 
 # Source files ------------------------------------------------------------
 source('indivRegion.R')

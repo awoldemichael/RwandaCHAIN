@@ -4,19 +4,26 @@ indivRegionUI = function(id){
   ns <- NS(id)
   
   tagList(
-    # -- Render the reference map --
-    fluidRow(column(4, imageOutput(ns('refMap'))),
-             
-             column(6, 
-                    # -- Controls --
-                    fluidRow(column(6, selectizeInput(ns('mech1'), label = '#1', choices = mechanisms)),
-                             column(6, selectizeInput(ns('mech2'), label = '#2', choices = mechanisms))),
-                    fluidRow(column(6, plotOutput(ns('indivSubIR'),
-                                                  width = widthDot))))),
+    # -- Controls --
+    fluidRow(column(4, " "),
+             column(3, selectizeInput(ns('mech1'), label = '#1', choices = mechanisms)),
+             column(3, selectizeInput(ns('mech2'), label = '#2', choices = mechanisms))),
     
+    # -- Render the reference map --
+    fluidRow(column(1, " "),
+             column(3, 
+                    fluidRow(imageOutput(ns('refMap'), width = widthDot))),
+             # -- Dot plot of the results --
+             column(3,
+                    fluidRow(h3('overlap in intended results')),
+                    fluidRow(plotOutput(ns('indivSubIR'), width = widthDot)))),
+    # -- Dot plots and maps of the two mechanisms to be compared --
+    fluidRow(column(4, " "),
+             column(8, h3('District overlap'))),
     fluidRow(column(1, " "),
              column(3,plotOutput(ns('map1'))),
-             column(3,plotOutput(ns('indivDist'))),
+             column(3,plotOutput(ns('indivDist'), width = widthDot)),
+             column(1, " "),
              column(3,plotOutput(ns('map2')))
     ),
     
@@ -127,16 +134,18 @@ indivRegion = function(input, output, session, df, selRegion,
                  alpha = 0.75, shape = 21) + 
       scale_fill_identity() +
       scale_x_continuous(breaks = c(-1, 0, 1),
-                         limits = c(-1, 1),
+                         limits = c(-1.25, 1.25),
                          labels = c(input$mech1, 'both', input$mech2)) +
       theme_void() +
       theme(text = element_text(colour = grey70K, size = 12),
             axis.text.x = element_text(size = 12),
-            axis.text.y = element_text(size = 12))
+            axis.text.y = element_text(size = 12, hjust = 1),
+            plot.margin = unit(c(yAxis_pad/2, yAxis_pad/4, yAxis_pad/4, yAxis_pad), 'cm')
+      )
   })
   
   
-
+  
   # filter the data for the dot Matrix of districts -----------------------------------------
   
   filter_dotDist = reactive({
@@ -165,7 +174,7 @@ indivRegion = function(input, output, session, df, selRegion,
       ungroup() %>% 
       select(District, mech2_dist)
     
-
+    
     
     
     full_join(dists1, dists2, by = "District")  %>% 
@@ -194,12 +203,14 @@ indivRegion = function(input, output, session, df, selRegion,
                  alpha = 0.75, shape = 21) + 
       scale_fill_identity() +
       scale_x_continuous(breaks = c(-1, 0, 1),
-                         limits = c(-1, 1),
+                         limits = c(-1.25, 1.25),
                          labels = c(input$mech1, 'both', input$mech2)) +
       theme_void() +
       theme(text = element_text(colour = grey70K, size = 12),
             axis.text.x = element_text(size = 12),
-            axis.text.y = element_text(size = 12))
+            axis.text.y = element_text(size = 12, hjust = 1),
+            plot.margin = unit(c(yAxis_pad/2, yAxis_pad/4, yAxis_pad/4, yAxis_pad*4), 'cm')
+      )
   })
   
   
