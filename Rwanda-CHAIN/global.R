@@ -8,7 +8,6 @@ library(ggvis)
 library(ggplot2)
 library(shiny)
 library(shinydashboard)
-library(llamar)
 library(rgdal)
 library(maptools)
 library(leaflet)
@@ -20,7 +19,7 @@ df = read.csv('data/RW_projects_adm2_2016-06-14.csv',
               stringsAsFactors = FALSE)
 
 # -- Map data --
-rw_adm2 = readOGR(path.expand("data/"), layer="District_Boundary_2006")
+rw_adm2 = readOGR(path.expand("data/"), layer="District_Boundary_2006_simpl")
 
 rw_adm2@data$id = rownames(rw_adm2@data)
 rw.points = fortify(rw_adm2, region="id")
@@ -44,8 +43,9 @@ mechanisms = sort(unique(df$mechanism))
 ips = sort(unique(df$IP))
 
 # Define colors for maps --------------------------------------------------
-baseColour = grey15K
-labelColour = grey90K
+grey70K = "#6d6e71"
+baseColour = grey15K = "#DCDDDE"
+labelColour = grey90K = "#414042"
 strokeColour = grey90K
 
 colourProv = c('#e41a1c', '#377eb8', 
