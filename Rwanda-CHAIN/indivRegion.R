@@ -182,8 +182,6 @@ indivRegion = function(input, output, session, df, selRegion,
   output$indivDist = renderPlot({
     filteredDF = filter_dotDist()
     
-    print(filteredDF)
-    
     ggplot(filteredDF, aes(y = District)) +
       geom_point(aes(x = -1), fill = grey15K, 
                  size = 10, colour = grey90K, shape = 21) +
@@ -221,7 +219,7 @@ indivRegion = function(input, output, session, df, selRegion,
       group_by(Province, District) %>% 
       summarise(num = n())
     
-    left_join(map1, rw.df)
+    left_join(map1, rw.df, by = 'District')
   })
   
   
@@ -256,7 +254,7 @@ indivRegion = function(input, output, session, df, selRegion,
       group_by(Province, District) %>% 
       summarise(num = n())
     
-    left_join(map2, rw.df)
+    left_join(map2, rw.df, by = 'District')
   })
   
   

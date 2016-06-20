@@ -47,6 +47,8 @@ maxLat = rw_adm2@bbox['y', 'max'] * (1+spacer)
 # Pull out choices for provinces, IPs, mechanisms -------------------------
 provinces = unique(rw_adm2$Prov_Name)
 
+districts = unique(rw_adm2$District)
+
 mechanisms = sort(unique(df$mechanism))
 
 subIRs = c('improved health practices (subpurpose 1)',
@@ -58,6 +60,9 @@ ips = sort(unique(df$IP))
 
 # -- refactorize results --
 df$subIR_ID = factor(df$subIR_ID, levels = rev(subIRs))
+
+# -- refactorize districts --
+df$District = factor(df$District, levels = sort(districts, decreasing = TRUE))
 
 # Define colors for maps --------------------------------------------------
 grey70K = "#6d6e71"
@@ -78,7 +83,7 @@ contPal = colorNumeric(palette = 'YlGnBu', domain = 0:20)
 # sizes -------------------------------------------------------------------
 widthMap = '750px'
 heightMap = '675px'
-widthDot = '400px'
+widthDot = '450px'
 circleScaling = 1000
 
 
