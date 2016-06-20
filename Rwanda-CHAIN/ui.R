@@ -77,10 +77,10 @@ body <- dashboardBody(
              fluidRow(imageOutput('footer'))
     ),
     tabPanel('by result',
-             fluidRow(column(6,indivResultUI('subIR1')),
-                      column(6,indivResultUI('subIR2'))),
-             fluidRow(column(6,indivResultUI('subIR3')),
-                      column(6,indivResultUI('subIR4'))),
+             fluidRow(column(4,indivResultUI('subIR1')),
+                      column(4,indivResultUI('subIR2'))),
+             fluidRow(column(4,indivResultUI('subIR3')),
+                      column(4,indivResultUI('subIR4'))),
              fluidRow(imageOutput('footer2')))
   ))
 
