@@ -5,9 +5,9 @@ indivRegionUI = function(id){
   
   tagList(
     # -- Controls --
-    fluidRow(column(4, " "),
-             column(3, selectizeInput(ns('mech1'), label = '#1', choices = mechanisms)),
-             column(3, selectizeInput(ns('mech2'), label = '#2', choices = mechanisms))),
+    fluidRow(column(4, h3('Compare where mechanisms work')),
+             column(3, selectizeInput(ns('mech1'), label = 'mechanism #1', choices = mechanisms)),
+             column(3, selectizeInput(ns('mech2'), label = 'mechanism #2', choices = mechanisms))),
     
     # -- Render the reference map --
     
@@ -39,6 +39,7 @@ indivRegionUI = function(id){
 indivRegion = function(input, output, session, df, selRegion, 
                        ips, results, mechanisms){
   
+  
   # filter the data to the Province -----------------------------------------
   
   filter_byResult = reactive({
@@ -54,6 +55,28 @@ indivRegion = function(input, output, session, df, selRegion,
                 ips = paste('&bull;', mechanism, collapse = ' <br> '))
   })
   
+  
+  # Update the selectize choices based on the selected options ------------------------------------
+  filter_byMech = reactive({
+    df %>% 
+    # -- Filter out mechanisms based on user input --
+    filter(Province == selRegion, 
+           mechanism %in% mechanisms(),
+           result %in% results(),
+           IP %in% ips()) %>%
+      group_by(mechanism) %>% 
+      summarise(num = n())
+    
+  })
+    
+    observe({
+      newChoices = filter_byMech()
+      newChoices = newChoices$mechanism
+      
+      updateSelectizeInput(session, 'mech1', choices = newChoices)
+      updateSelectizeInput(session, 'mech2', choices = newChoices, selected = newChoices[2])
+      
+      })
   
   # GeoCenter tramp stamp ---------------------------------------------------
   output$indivFooter = renderImage({
