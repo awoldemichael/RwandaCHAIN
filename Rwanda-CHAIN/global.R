@@ -49,7 +49,15 @@ provinces = unique(rw_adm2$Prov_Name)
 
 mechanisms = sort(unique(df$mechanism))
 
+subIRs = c('improved health practices (subpurpose 1)',
+                                           'vulnerable population protection (subpurpose 2)',
+                                           'improved nutrition (subpurpose 3)',
+                                           'CSO/GOR performance (subpurpose 4)')
+
 ips = sort(unique(df$IP))
+
+# -- refactorize results --
+df$subIR_ID = factor(df$subIR_ID, levels = rev(subIRs))
 
 # Define colors for maps --------------------------------------------------
 grey70K = "#6d6e71"
