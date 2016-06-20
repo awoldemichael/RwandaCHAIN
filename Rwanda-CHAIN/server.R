@@ -39,6 +39,25 @@ shinyServer(
                reactive(input$filterIP), reactive(input$filterResult), 
                reactive(input$filterMech))
     
+    
+    # individual results ------------------------------------------------------
+    
+    callModule(indivResult, 'subIR1', df, '1', 
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
+    
+    callModule(indivResult, 'subIR2', df, '2', 
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
+    
+    callModule(indivResult, 'subIR3', df, '3', 
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
+    
+    callModule(indivResult, 'subIR4', df, '4', 
+               reactive(input$filterIP), reactive(input$filterResult), 
+               reactive(input$filterMech))
+    
     # leaflet plot ------------------------------------------------------------
     
     output$main = renderLeaflet({
@@ -159,13 +178,6 @@ shinyServer(
         alt = "Plots from USAID's GeoCenter"
       ))
     }, deleteFile = FALSE)
+    
+  # -- fin --   
   })
-
-
-
-
-
-
-
-
-

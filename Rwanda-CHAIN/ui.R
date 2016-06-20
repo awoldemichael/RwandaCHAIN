@@ -75,8 +75,12 @@ body <- dashboardBody(
              column(5, fluidRow(h3('Number of Unique Mechanisms by Province')),
                     fluidRow(ggvisOutput('numByProv'))),
              fluidRow(imageOutput('footer'))
-             
-    )
+    ),
+    tabPanel('by result',
+             fluidRow(column(6,indivResult('subIR1')),
+                      column(6,indivResult('subIR2'))),
+             fluidRow(column(6,indivResult('subIR3')),
+                      column(6,indivResult('subIR4'))))
   ))
 
 # Dashboard definition (main call) ----------------------------------------

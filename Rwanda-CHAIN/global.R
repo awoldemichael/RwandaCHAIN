@@ -5,6 +5,7 @@
 # -- data manipulation --
 library(dplyr)
 library(tidyr)
+library(data.table)
 
 # -- plotting --
 library(ggvis)
@@ -74,3 +75,4 @@ circleScaling = 1000
 
 # Source files ------------------------------------------------------------
 source('indivRegion.R')
+source('indivResults.R')
