@@ -71,29 +71,63 @@ indivRegion = function(input, output, session, df, selRegion,
   # filter the data for the dot Matrix -----------------------------------------
   
   filter_dotMatrix = reactive({
-    df %>% 
+    results1 = df %>% 
       # -- Filter out mechanisms based on user input --
-      filter(Province == selRegion, 
-             mechanism %in% c(input$mech2, input$mech1),
-             result %in% results(),
-             IP %in% ips()) %>%
+      filter(result %in% results(), # remove results if unchecked by user
+             Province == selRegion, # limit to the selected region
+             mechanism %in% c(input$mech1)) %>% # select the first mechanism from the dropdown menu
+      
       # -- Group by subIR and count --
       group_by(mechanism, subIR_ID, result) %>% 
       summarise(num = n()) %>% 
-      # -- spread into a wide dataset --
-      spread(mechanism, num)
+      mutate(mech1_result = num > 0) %>% # convert to binary
+      ungroup() %>% 
+      select(subIR_ID, mech1_result)
+    
+    results2 = df %>% 
+      # -- Filter out mechanisms based on user input --
+      filter(result %in% results(), # remove results if unchecked by user
+             Province == selRegion, # limit to the selected region
+             mechanism %in% c(input$mech2)) %>% # select the second mechanism from the dropdown menu
+      
+      # -- Group by subIR and count --
+      group_by(mechanism, subIR_ID, result) %>% 
+      summarise(num = n()) %>% 
+      mutate(mech2_result = num > 0) %>% # convert to binary
+      ungroup() %>% 
+      select(subIR_ID, mech2_result, result)
+    
+    
+    full_join(results1, results2, by = "subIR_ID")  %>% 
+      mutate(mech1_result = ifelse(is.na(mech1_result), 0, mech1_result),
+             mech2_result = ifelse(is.na(mech2_result), 0, mech2_result),
+             diff = mech1_result - mech2_result,
+             colourDiff = ifelse(diff == 1, blueAccent,
+                                 ifelse(diff == -1, redAccent,
+                                        ifelse(diff == 0, purpleAccent, grey15K))))
   })
   
   
-  # individual subIR matrix -------------------------------------------------
+  # plot individual subIR matrix -------------------------------------------------
   output$indivSubIR = renderPlot({
     filteredDF = filter_dotMatrix()
     
-    # print(filteredDF %>% select(-result))
+    print(filteredDF)
     
     ggplot(filteredDF, aes(y = subIR_ID)) +
-      geom_point(aes_(x = input$mech1), size = 10, colour = redAccent) + 
-      geom_point(aes_(x = input$mech2), size = 10, colour = blueAccent) +
+      geom_point(aes(x = -1), fill = grey15K, 
+                 size = 10, colour = grey90K, shape = 21) +
+      geom_point(aes(x = 0), fill = grey15K,
+                 size = 10, colour = grey90K, shape = 21) +
+      geom_point(aes(x = 1), fill = grey15K,
+                 size = 10, colour = grey90K, shape = 21) +
+      geom_point(aes(x = diff, fill = colourDiff), 
+                 size = 10, colour = grey90K, 
+                 alpha = 0.75, shape = 21) + 
+      scale_fill_identity() +
+      scale_x_continuous(breaks = c(-1, 0, 1),
+      limits = c(-1, 1),
+      labels = c(input$mech1, 'both', input$mech2)) +
       theme_bw()
   })
   
