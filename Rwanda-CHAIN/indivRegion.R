@@ -10,21 +10,21 @@ indivRegionUI = function(id){
              column(3, selectizeInput(ns('mech2'), label = '#2', choices = mechanisms))),
     
     # -- Render the reference map --
-    fluidRow(column(1, " "),
-             column(3, 
-                    fluidRow(imageOutput(ns('refMap'), width = widthDot))),
-             # -- Dot plot of the results --
-             column(3,
-                    fluidRow(h3('overlap in intended results')),
-                    fluidRow(plotOutput(ns('indivSubIR'), width = widthDot)))),
+    
+    fluidRow(column(4, " "),
+             column(8, h3('overlap in intended result'))),
+    fluidRow(
+             column(4, imageOutput(ns('refMap'), width = widthDot)),
+             column(3, plotOutput(ns('indivSubIR'), width = widthDot))),
+             
     # -- Dot plots and maps of the two mechanisms to be compared --
     fluidRow(column(4, " "),
              column(8, h3('District overlap'))),
     fluidRow(column(1, " "),
-             column(3,plotOutput(ns('map1'))),
-             column(3,plotOutput(ns('indivDist'), width = widthDot)),
+             column(3, plotOutput(ns('map1'))),
+             column(3, plotOutput(ns('indivDist'), width = widthDot)),
              column(1, " "),
-             column(3,plotOutput(ns('map2')))
+             column(3, plotOutput(ns('map2')))
     ),
     
     fluidRow(imageOutput(ns('indivFooter'), width = '100%'))
