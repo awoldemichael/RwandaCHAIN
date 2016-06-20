@@ -24,16 +24,27 @@ indivResult = function(input, output, session, df, selResult,
   # filter the data to the District for indicated result -----------------------------------------
   
   filter_result = reactive({
-    df %>% 
+    basic_filtered = df %>% 
       # -- Filter out mechanisms based on user input --
       filter( 
         mechanism %in% mechanisms(),
+        result %in% results(),
         subIR_ID %like% selResult,
-        IP %in% ips()) %>%
+        IP %in% ips()) 
+    
+    result_name = basic_filtered %>% 
+      group_by(Province, District, output) %>% 
+      summarise(ips = paste('&emsp; &bull;', shortName, collapse = ' <br> ')) %>% 
+      ungroup() %>% 
+      group_by(Province, District) %>% 
+      summarise(ips = paste('<strong>', output, '</strong> <br>', ips, collapse = ' <br> '))
+    
+    ct_byDist = basic_filtered %>%
       # -- Group by District and count --
       group_by(Province, District) %>% 
-      summarise(num = n(),
-                ips = paste('&bull;', shortName, ': ', output, collapse = ' <br> '))
+      summarise(num = n())
+    
+    full_join(ct_byDist, result_name, by = c('Province', 'District'))
   })
   
   
@@ -43,7 +54,7 @@ indivResult = function(input, output, session, df, selResult,
     
     filteredDF = filter_result()
     
-    rw_adm2@data = full_join(rw_adm2@data, filteredDF)
+    rw_adm2@data = full_join(rw_adm2@data, filteredDF, by = 'District')
     
     # -- Pull out the centroids --
     rw_centroids = data.frame(coordinates(rw_adm2)) %>%
@@ -52,13 +63,13 @@ indivResult = function(input, output, session, df, selResult,
     rw_centroids = cbind(rw_centroids,
                          District = rw_adm2@data$District)
     
-    rw_centroids = left_join(filteredDF, rw_centroids)
+    rw_centroids = left_join(filteredDF, rw_centroids, by = 'District')
     
     
     # -- Info popup box --
     info_popup <- paste0("<strong>District: </strong>",
                          rw_adm2$District,
-                         "<br><strong>mechanisms: </strong> <br>",
+                         "<br><strong>results: </strong> <br>",
                          rw_adm2$ips)
     
     info_popup_circles <- paste0("<strong>District: </strong>",
