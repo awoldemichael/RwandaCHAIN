@@ -89,7 +89,7 @@ indivRegion = function(input, output, session, df, selRegion,
   output$indivSubIR = renderPlot({
     filteredDF = filter_dotMatrix()
     
-    print(filteredDF %>% select(-result))
+    # print(filteredDF %>% select(-result))
     
     ggplot(filteredDF, aes(y = subIR_ID)) +
       geom_point(aes_(x = input$mech1), size = 10, colour = redAccent) + 

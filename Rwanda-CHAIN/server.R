@@ -57,6 +57,15 @@ shinyServer(
     callModule(indivResult, 'subIR4', df, '4', 
                reactive(input$filterIP), reactive(input$filterResult), 
                reactive(input$filterMech))
+    # GeoCenter tramp stamp ---------------------------------------------------
+    output$indivFooter2 = renderImage({
+      return(list(
+        src = "img/footer_Rw.png",
+        width = '100%',
+        filetype = "image/png",
+        alt = "Plots from USAID's GeoCenter"
+      ))
+    }, deleteFile = FALSE)
     
     # leaflet plot ------------------------------------------------------------
     
