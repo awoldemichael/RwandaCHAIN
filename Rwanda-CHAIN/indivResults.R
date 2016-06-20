@@ -43,8 +43,6 @@ indivResult = function(input, output, session, df, selResult,
     
     filteredDF = filter_result()
     
-    print(filteredDF)
-    
     rw_adm2@data = full_join(rw_adm2@data, filteredDF)
     
     # -- Pull out the centroids --

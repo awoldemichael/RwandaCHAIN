@@ -17,22 +17,6 @@ sidebar <- dashboardSidebar(
   checkboxGroupInput("filterIP",label = 'partner', inline = FALSE,
                      choices = ips,
                      selected = ips)
-  
-  # selectizeInput('filterIP', label = 'partner', multiple = TRUE,
-  #                selected = ips,
-  #                choices = ips),
-  
-  
-  
-  # -- Sidebar icons --
-  # sidebarMenu(
-  #   # Setting id makes input$tabs give the tabName of currently-selected tab
-  #   id = "tabs",
-  #   menuItem("each country", tabName = "indivTab", icon = icon("crosshairs")),
-  #   menuItem("maps", tabName = "choroTab", icon = icon("map-o")),
-  #   menuItem("TFR over time", tabName = "plot", icon = icon("bar-chart")),
-  #   menuItem("change in TFR rates", tabName = "rateTab", icon = icon("line-chart"))
-  # )
 )
 
 
@@ -54,17 +38,6 @@ body <- dashboardBody(
   # -- Each tab --
   tabsetPanel(
     
-    # -- Individual region plots --
-    tabPanel('Eastern Province',
-             fluidRow(indivRegionUI('east'))),
-    tabPanel('Kigali City',
-             fluidRow(indivRegionUI('kigali'))),
-    tabPanel('Northern Province',
-             fluidRow(indivRegionUI('north'))),
-    tabPanel('Southern Province',
-             fluidRow(indivRegionUI('south'))),
-    tabPanel('Western Province',
-             fluidRow(indivRegionUI('west'))),
     
     tabPanel('by district',
              
@@ -81,7 +54,19 @@ body <- dashboardBody(
                       column(4,indivResultUI('subIR2'))),
              fluidRow(column(4,indivResultUI('subIR3')),
                       column(4,indivResultUI('subIR4'))),
-             fluidRow(imageOutput('footer2')))
+             fluidRow(imageOutput('footer2'))),
+    
+    # -- Individual region plots --
+    tabPanel('Eastern Province',
+             fluidRow(indivRegionUI('east'))),
+    tabPanel('Kigali City',
+             fluidRow(indivRegionUI('kigali'))),
+    tabPanel('Northern Province',
+             fluidRow(indivRegionUI('north'))),
+    tabPanel('Southern Province',
+             fluidRow(indivRegionUI('south'))),
+    tabPanel('Western Province',
+             fluidRow(indivRegionUI('west')))
   ))
 
 # Dashboard definition (main call) ----------------------------------------
