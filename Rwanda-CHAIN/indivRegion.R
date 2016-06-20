@@ -4,10 +4,17 @@ indivRegionUI = function(id){
   ns <- NS(id)
   
   tagList(
-    fluidRow(column(6, imageOutput(ns('indivMap'))),
-             column(6, plotOutput(ns('indivRegion')))),
+    # -- Render the reference map --
+    fluidRow(column(5, imageOutput(ns('refMap'))),
+             
+             column(7, 
+                    # -- Controls --
+                    fluidRow(column(6, selectizeInput(ns('mech1'), label = '#1', choices = mechanisms)),
+                             column(6, selectizeInput(ns('mech2'), label = '#2', choices = mechanisms))),
+                    fluidRow(plotOutput(ns('indivSubIR'))))),
     
-    fluidRow(column(6,plotOutput(ns('indivPlot')))
+    fluidRow(column(6,plotOutput(ns('map1'))),
+             column(6,plotOutput(ns('map2')))
     ),
     
     fluidRow(imageOutput(ns('indivFooter'), width = '100%'))
@@ -26,16 +33,17 @@ indivRegion = function(input, output, session, df, selRegion,
   
   filter_byResult = reactive({
     df %>% 
-    # -- Filter out mechanisms based on user input --
-    filter(Province == selRegion, 
-           mechanism %in% mechanisms(),
-           result %in% results(),
-           IP %in% ips()) %>%
+      # -- Filter out mechanisms based on user input --
+      filter(Province == selRegion, 
+             mechanism %in% mechanisms(),
+             result %in% results(),
+             IP %in% ips()) %>%
       # -- Group by District and count --
       group_by(Province, District, shortName) %>% 
       summarise(num = n(),
                 ips = paste('&bull;', mechanism, collapse = ' <br> '))
   })
+  
   
   # GeoCenter tramp stamp ---------------------------------------------------
   output$indivFooter = renderImage({
@@ -50,7 +58,7 @@ indivRegion = function(input, output, session, df, selRegion,
   
   # individual map ----------------------------------------------------------
   
-  output$indivMap = renderImage({
+  output$refMap = renderImage({
     return(list(
       src = paste0("img/rwanda_", selRegion, '.png'),
       width = '100%',
@@ -58,6 +66,36 @@ indivRegion = function(input, output, session, df, selRegion,
       alt = "Plots by USAID's GeoCenter"
     ))
   }, deleteFile = FALSE)
+  
+  
+  # filter the data for the dot Matrix -----------------------------------------
+  
+  filter_dotMatrix = reactive({
+    df %>% 
+      # -- Filter out mechanisms based on user input --
+      filter(Province == selRegion, 
+             mechanism %in% c(input$mech2, input$mech1),
+             result %in% results(),
+             IP %in% ips()) %>%
+      # -- Group by subIR and count --
+      group_by(mechanism, subIR_ID, result) %>% 
+      summarise(num = n()) %>% 
+      # -- spread into a wide dataset --
+      spread(mechanism, num) 
+  })
+  
+  
+  # individual subIR matrix -------------------------------------------------
+  output$indivSubIR = renderPlot({
+    filteredDF = filter_dotMatrix()
+    
+    print(filteredDF %>% select(-result))
+    
+    ggplot(filteredDF, aes(y = subIR_ID)) +
+      geom_point(aes_(x = 'x'), size = 10, colour = redAccent) + 
+      # geom_point(aes_(x = input$mech2), size = 10, colour = blueAccent) + 
+      theme_bw()
+  })
   
   
   output$indivRegion = renderPlot({
@@ -70,14 +108,14 @@ indivRegion = function(input, output, session, df, selRegion,
       arrange(desc(num))
     
     f$shortName = factor(f$shortName,
-                                  levels = f$shortName)
+                         levels = f$shortName)
     
     f$District = factor(f$District,
-                         levels = f$District) 
+                        levels = f$District) 
     
     ggplot(f, aes(y = District,
-                           x = shortName,
-                           fill = num)) +
+                  x = shortName,
+                  fill = num)) +
       geom_tile(colour = 'white', size = 0.25) +
       theme_xylab() +
       scale_fill_gradientn(colours = brewer.pal(9, 'Blues')[4:9])
@@ -101,7 +139,7 @@ indivRegion = function(input, output, session, df, selRegion,
     # 
     # filteredDF = rbind(filteredDF, f)
     
-
+    
     # ggplot(f, aes(x = 1,
     #                        y = shortName,
     #                        fill = num)) +
@@ -113,6 +151,8 @@ indivRegion = function(input, output, session, df, selRegion,
   })
   
 }
+
+
 
 
 
