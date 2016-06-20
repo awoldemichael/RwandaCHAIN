@@ -2,16 +2,24 @@
 # Laura Hughes, lhughes@usaid.gov, 6 June 2016
 
 # Set up the app ----------------------------------------------------------
+# -- data manipulation --
 library(dplyr)
 library(tidyr)
+
+# -- plotting --
 library(ggvis)
 library(ggplot2)
+library(RColorBrewer)
+
+# -- shiny --
 library(shiny)
 library(shinydashboard)
+
+# -- mapping --
+library(rgeos)
 library(rgdal)
 library(maptools)
 library(leaflet)
-library(RColorBrewer)
 
 # import data -------------------------------------------------------------
 # -- IP data --
@@ -47,6 +55,10 @@ grey70K = "#6d6e71"
 baseColour = grey15K = "#DCDDDE"
 labelColour = grey90K = "#414042"
 strokeColour = grey90K
+
+redAccent = '#e41a1c'
+blueAccent = '#377eb8'
+purpleAccent = '#984ea3'
 
 colourProv = c('#e41a1c', '#377eb8', 
                '#4daf4a', '#984ea3', '#ff7f00')
