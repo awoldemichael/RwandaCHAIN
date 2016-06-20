@@ -150,6 +150,76 @@ indivRegion = function(input, output, session, df, selRegion,
     
   })
   
+  
+  # filter the data for map1 -----------------------------------------
+  
+  filter_map1 = reactive({
+    
+    map1 = df %>% 
+      # -- Filter out mechanisms based on user input --
+      filter(Province == selRegion, 
+             mechanism %in% c(input$mech1),
+             result %in% results(),
+             IP %in% ips()) %>%
+      # -- Group by District and count --
+      group_by(Province, District) %>% 
+      summarise(num = n())
+    
+    left_join(map1, rw.df)
+  })
+  
+  
+  output$map1 = renderPlot({
+    filteredMap1 = filter_map1()
+    
+    ggplot(rw.df %>% filter(Prov_Name == selRegion), aes(x = long, y = lat, group = group)) +
+      # -- Base map --
+      geom_polygon(fill = grey15K) +
+      
+      # -- Current
+      geom_polygon(fill = redAccent, 
+                   data = filteredMap1,
+                   alpha = 0.75) +
+      geom_path(colour = grey90K, size = 0.1) +
+      coord_equal() +
+      ggtitle(input$mech1) +
+      theme_void()
+  })
+  
+  # filter the data for map2 -----------------------------------------
+  
+  filter_map2 = reactive({
+    
+    map2 = df %>% 
+      # -- Filter out mechanisms based on user input --
+      filter(Province == selRegion, 
+             mechanism %in% c(input$mech2),
+             result %in% results(),
+             IP %in% ips()) %>%
+      # -- Group by District and count --
+      group_by(Province, District) %>% 
+      summarise(num = n())
+    
+    left_join(map2, rw.df)
+  })
+  
+  
+  output$map2 = renderPlot({
+    filteredMap2 = filter_map2()
+    
+    ggplot(rw.df %>% filter(Prov_Name == selRegion), aes(x = long, y = lat, group = group)) +
+      # -- Base map --
+      geom_polygon(fill = grey15K) +
+      
+      # -- Current
+      geom_polygon(fill = blueAccent, 
+                   data = filteredMap2,
+                   alpha = 0.75) +
+      geom_path(colour = grey90K, size = 0.1) +
+      coord_equal() +
+      ggtitle(input$mech2) +
+      theme_void()
+  })
 }
 
 
