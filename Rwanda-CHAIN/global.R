@@ -78,6 +78,7 @@ contPal = colorNumeric(palette = 'YlGnBu', domain = 0:20)
 # sizes -------------------------------------------------------------------
 widthMap = '750px'
 heightMap = '675px'
+widthDot = '400px'
 circleScaling = 1000
 
 

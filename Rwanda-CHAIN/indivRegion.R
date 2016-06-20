@@ -5,16 +5,19 @@ indivRegionUI = function(id){
   
   tagList(
     # -- Render the reference map --
-    fluidRow(column(5, imageOutput(ns('refMap'))),
+    fluidRow(column(4, imageOutput(ns('refMap'))),
              
-             column(7, 
+             column(6, 
                     # -- Controls --
                     fluidRow(column(6, selectizeInput(ns('mech1'), label = '#1', choices = mechanisms)),
                              column(6, selectizeInput(ns('mech2'), label = '#2', choices = mechanisms))),
-                    fluidRow(plotOutput(ns('indivSubIR'))))),
+                    fluidRow(column(6, plotOutput(ns('indivSubIR'),
+                                                  width = widthDot))))),
     
-    fluidRow(column(6,plotOutput(ns('map1'))),
-             column(6,plotOutput(ns('map2')))
+    fluidRow(column(1, " "),
+             column(3,plotOutput(ns('map1'))),
+             column(3,plotOutput(ns('indivDiv'))),
+             column(3,plotOutput(ns('map2')))
     ),
     
     fluidRow(imageOutput(ns('indivFooter'), width = '100%'))
@@ -112,8 +115,6 @@ indivRegion = function(input, output, session, df, selRegion,
   output$indivSubIR = renderPlot({
     filteredDF = filter_dotMatrix()
     
-    print(filteredDF)
-    
     ggplot(filteredDF, aes(y = subIR_ID)) +
       geom_point(aes(x = -1), fill = grey15K, 
                  size = 10, colour = grey90K, shape = 21) +
@@ -126,9 +127,12 @@ indivRegion = function(input, output, session, df, selRegion,
                  alpha = 0.75, shape = 21) + 
       scale_fill_identity() +
       scale_x_continuous(breaks = c(-1, 0, 1),
-      limits = c(-1, 1),
-      labels = c(input$mech1, 'both', input$mech2)) +
-      theme_bw()
+                         limits = c(-1, 1),
+                         labels = c(input$mech1, 'both', input$mech2)) +
+      theme_void() +
+      theme(text = element_text(colour = grey70K, size = 12),
+            axis.text.x = element_text(size = 12),
+            axis.text.y = element_text(size = 12))
   })
   
   
