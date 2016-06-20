@@ -33,7 +33,7 @@ indivResult = function(input, output, session, df, selResult,
       # -- Group by District and count --
       group_by(Province, District) %>% 
       summarise(num = n(),
-                ips = paste('&bull;', shortName, ': ', result, collapse = ' <br> '))
+                ips = paste('&bull;', shortName, ': ', output, collapse = ' <br> '))
   })
   
   
@@ -77,7 +77,10 @@ indivResult = function(input, output, session, df, selResult,
                   fillOpacity = 0.6,
                   color = grey90K,
                   weight = 1,
-                  popup = info_popup)
+                  popup = info_popup) %>% 
+      addLegend("bottomright", pal = contPal, values = ~num,
+                title = "# outputs",
+                opacity = 1)
   })
   
   output$title = renderPrint({

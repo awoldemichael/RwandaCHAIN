@@ -65,7 +65,7 @@ colourProv = c('#e41a1c', '#377eb8',
                '#4daf4a', '#984ea3', '#ff7f00')
 
 categPal = colorFactor(palette = colourProv, domain = provinces)
-contPal = colorNumeric(palette = 'YlGnBu', domain = NULL)
+contPal = colorNumeric(palette = 'YlGnBu', domain = 0:20)
 
 # sizes -------------------------------------------------------------------
 widthMap = '750px'
