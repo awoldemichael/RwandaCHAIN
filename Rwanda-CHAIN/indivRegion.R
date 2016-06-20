@@ -81,7 +81,7 @@ indivRegion = function(input, output, session, df, selRegion,
       group_by(mechanism, subIR_ID, result) %>% 
       summarise(num = n()) %>% 
       # -- spread into a wide dataset --
-      spread(mechanism, num) 
+      spread(mechanism, num)
   })
   
   
@@ -92,8 +92,8 @@ indivRegion = function(input, output, session, df, selRegion,
     print(filteredDF %>% select(-result))
     
     ggplot(filteredDF, aes(y = subIR_ID)) +
-      geom_point(aes_(x = 'x'), size = 10, colour = redAccent) + 
-      # geom_point(aes_(x = input$mech2), size = 10, colour = blueAccent) + 
+      geom_point(aes_(x = input$mech1), size = 10, colour = redAccent) + 
+      geom_point(aes_(x = input$mech2), size = 10, colour = blueAccent) +
       theme_bw()
   })
   
