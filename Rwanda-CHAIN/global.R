@@ -11,6 +11,7 @@ library(data.table)
 library(ggvis)
 library(ggplot2)
 library(RColorBrewer)
+library(grid)
 
 # -- shiny --
 library(shiny)

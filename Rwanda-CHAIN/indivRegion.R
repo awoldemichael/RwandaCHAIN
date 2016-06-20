@@ -14,9 +14,9 @@ indivRegionUI = function(id){
     fluidRow(column(4, " "),
              column(8, h3('overlap in intended result'))),
     fluidRow(
-             column(4, imageOutput(ns('refMap'), width = widthDot)),
-             column(3, plotOutput(ns('indivSubIR'), width = widthDot))),
-             
+      column(4, imageOutput(ns('refMap'), width = widthDot)),
+      column(3, plotOutput(ns('indivSubIR'), width = widthDot))),
+    
     # -- Dot plots and maps of the two mechanisms to be compared --
     fluidRow(column(4, " "),
              column(8, h3('District overlap'))),
@@ -122,7 +122,10 @@ indivRegion = function(input, output, session, df, selRegion,
   output$indivSubIR = renderPlot({
     filteredDF = filter_dotMatrix()
     
-    ggplot(filteredDF, aes(y = subIR_ID)) +
+    # Find the position to put the y-labels
+    yLab = nrow(filteredDF) + 0.5
+    
+    resultsPlot = ggplot(filteredDF, aes(y = subIR_ID)) +
       geom_point(aes(x = -1), fill = grey15K, 
                  size = 10, colour = grey90K, shape = 21) +
       geom_point(aes(x = 0), fill = grey15K,
@@ -132,16 +135,28 @@ indivRegion = function(input, output, session, df, selRegion,
       geom_point(aes(x = diff, fill = colourDiff), 
                  size = 10, colour = grey90K, 
                  alpha = 0.75, shape = 21) + 
+      annotate('text', x = -1, y = yLab, label = input$mech1, 
+               hjust = 1, colour = grey70K) +
+      annotate('text', x = 0, y = yLab, label = 'both', 
+               hjust = 0.5, colour = grey70K) +
+      annotate('text', x = 1, y = yLab, label = input$mech2, 
+               hjust = 0, colour = grey70K) +
       scale_fill_identity() +
       scale_x_continuous(breaks = c(-1, 0, 1),
                          limits = c(-1.25, 1.25),
                          labels = c(input$mech1, 'both', input$mech2)) +
       theme_void() +
       theme(text = element_text(colour = grey70K, size = 12),
-            axis.text.x = element_text(size = 12),
+            axis.text.x = element_text(size = 8),
             axis.text.y = element_text(size = 12, hjust = 1),
             plot.margin = unit(c(yAxis_pad/2, yAxis_pad/4, yAxis_pad/4, yAxis_pad), 'cm')
       )
+    
+    gt <- ggplot_gtable(ggplot_build(resultsPlot))
+    gt$layout$clip[gt$layout$name == "panel"] <- "off"
+    grid.draw(gt)
+    
+    return(gt)
   })
   
   
@@ -191,7 +206,10 @@ indivRegion = function(input, output, session, df, selRegion,
   output$indivDist = renderPlot({
     filteredDF = filter_dotDist()
     
-    ggplot(filteredDF, aes(y = District)) +
+    # Find the position to put the y-labels
+    yLab = nrow(filteredDF) + 0.5
+    
+    distPlot = ggplot(filteredDF, aes(y = District)) +
       geom_point(aes(x = -1), fill = grey15K, 
                  size = 10, colour = grey90K, shape = 21) +
       geom_point(aes(x = 0), fill = grey15K,
@@ -201,16 +219,28 @@ indivRegion = function(input, output, session, df, selRegion,
       geom_point(aes(x = diff, fill = colourDiff), 
                  size = 10, colour = grey90K, 
                  alpha = 0.75, shape = 21) + 
+      annotate('text', x = -1, y = yLab, label = input$mech1, 
+               hjust = 1, colour = grey70K) +
+      annotate('text', x = 0, y = yLab, label = 'both', 
+               hjust = 0.5, colour = grey70K) +
+      annotate('text', x = 1, y = yLab, label = input$mech2, 
+               hjust = 0, colour = grey70K) +
       scale_fill_identity() +
       scale_x_continuous(breaks = c(-1, 0, 1),
                          limits = c(-1.25, 1.25),
                          labels = c(input$mech1, 'both', input$mech2)) +
       theme_void() +
       theme(text = element_text(colour = grey70K, size = 12),
-            axis.text.x = element_text(size = 12),
+            axis.text.x = element_text(size = 8),
             axis.text.y = element_text(size = 12, hjust = 1),
             plot.margin = unit(c(yAxis_pad/2, yAxis_pad/4, yAxis_pad/4, yAxis_pad*4), 'cm')
       )
+    
+    gt <- ggplot_gtable(ggplot_build(distPlot))
+    gt$layout$clip[gt$layout$name == "panel"] <- "off"
+    grid.draw(gt)
+    
+    return(gt)
   })
   
   
