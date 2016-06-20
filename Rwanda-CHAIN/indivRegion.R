@@ -16,7 +16,7 @@ indivRegionUI = function(id){
     
     fluidRow(column(1, " "),
              column(3,plotOutput(ns('map1'))),
-             column(3,plotOutput(ns('indivDiv'))),
+             column(3,plotOutput(ns('indivDist'))),
              column(3,plotOutput(ns('map2')))
     ),
     
@@ -104,7 +104,7 @@ indivRegion = function(input, output, session, df, selRegion,
     full_join(results1, results2, by = "subIR_ID")  %>% 
       mutate(mech1_result = ifelse(is.na(mech1_result), 0, mech1_result),
              mech2_result = ifelse(is.na(mech2_result), 0, mech2_result),
-             diff = mech1_result - mech2_result,
+             diff = mech2_result - mech1_result,
              colourDiff = ifelse(diff == 1, blueAccent,
                                  ifelse(diff == -1, redAccent,
                                         ifelse(diff == 0, purpleAccent, grey15K))))
@@ -136,29 +136,75 @@ indivRegion = function(input, output, session, df, selRegion,
   })
   
   
-  output$indivRegion = renderPlot({
-    filteredDF = filter_byResult() 
+
+  # filter the data for the dot Matrix of districts -----------------------------------------
+  
+  filter_dotDist = reactive({
     
-    f = filteredDF %>%
-      ungroup() %>%
-      group_by(District, shortName) %>%
-      summarise(num = sum(num)) %>% 
-      arrange(desc(num))
+    dists1 = df %>% 
+      # -- Filter out mechanisms based on user input --
+      filter(result %in% results(), # remove results if unchecked by user
+             Province == selRegion, # limit to the selected region
+             mechanism %in% c(input$mech1)) %>% # select the first mechanism from the dropdown menu
+      # -- Group by district and count --
+      group_by(mechanism, District) %>% 
+      summarise(num = n()) %>% 
+      mutate(mech1_dist = num > 0) %>% # convert to binary
+      ungroup() %>% 
+      select(District, mech1_dist)
     
-    f$shortName = factor(f$shortName,
-                         levels = f$shortName)
+    dists2 = df %>% 
+      # -- Filter out mechanisms based on user input --
+      filter(result %in% results(), # remove results if unchecked by user
+             Province == selRegion, # limit to the selected region
+             mechanism %in% c(input$mech2)) %>% # select the second mechanism from the dropdown menu
+      # -- Group by district and count --
+      group_by(mechanism, District) %>% 
+      summarise(num = n()) %>% 
+      mutate(mech2_dist = num > 0) %>% # convert to binary
+      ungroup() %>% 
+      select(District, mech2_dist)
     
-    f$District = factor(f$District,
-                        levels = f$District) 
+
     
-    ggplot(f, aes(y = District,
-                  x = shortName,
-                  fill = num)) +
-      geom_tile(colour = 'white', size = 0.25) +
-      theme_xylab() +
-      scale_fill_gradientn(colours = brewer.pal(9, 'Blues')[4:9])
     
+    full_join(dists1, dists2, by = "District")  %>% 
+      mutate(mech1_dist = ifelse(is.na(mech1_dist), 0, mech1_dist),
+             mech2_dist = ifelse(is.na(mech2_dist), 0, mech2_dist),
+             diff = mech2_dist - mech1_dist,
+             colourDiff = ifelse(diff == 1, blueAccent,
+                                 ifelse(diff == -1, redAccent,
+                                        ifelse(diff == 0, purpleAccent, grey15K))))
   })
+  
+  
+  # plot individual district matrix -------------------------------------------------
+  output$indivDist = renderPlot({
+    filteredDF = filter_dotDist()
+    
+    print(filteredDF)
+    
+    ggplot(filteredDF, aes(y = District)) +
+      geom_point(aes(x = -1), fill = grey15K, 
+                 size = 10, colour = grey90K, shape = 21) +
+      geom_point(aes(x = 0), fill = grey15K,
+                 size = 10, colour = grey90K, shape = 21) +
+      geom_point(aes(x = 1), fill = grey15K,
+                 size = 10, colour = grey90K, shape = 21) +
+      geom_point(aes(x = diff, fill = colourDiff), 
+                 size = 10, colour = grey90K, 
+                 alpha = 0.75, shape = 21) + 
+      scale_fill_identity() +
+      scale_x_continuous(breaks = c(-1, 0, 1),
+                         limits = c(-1, 1),
+                         labels = c(input$mech1, 'both', input$mech2)) +
+      theme_void() +
+      theme(text = element_text(colour = grey70K, size = 12),
+            axis.text.x = element_text(size = 12),
+            axis.text.y = element_text(size = 12))
+  })
+  
+  
   
   
   # filter the data for map1 -----------------------------------------
