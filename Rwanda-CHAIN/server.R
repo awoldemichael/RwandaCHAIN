@@ -177,6 +177,83 @@ shinyServer(
     }) %>% 
       bind_shiny('numByProv') 
     
+    # overlap matrix ------------------------------------------------------------
+    output$overlap = renderPlot({
+      filterDF  = reactive({
+        df %>% 
+          # -- Filter out mechanisms based on user input --
+          filter(mechanism %in% input$filterMech, 
+                 result %in% input$filterResult,
+                 IP %in% input$filterIP, 
+                 Province %in% input$selProv) %>%
+          
+          # -- Calculate binary if work in district --
+          group_by(Province, District, shortName) %>% 
+          summarise(num = n()) %>% 
+          mutate(isActive = num > 0) %>%
+          ungroup() %>% 
+          select(District, shortName, isActive) %>%
+          spread(District, isActive)
+      })
+      
+      filteredDF = filterDF()
+      
+      # Convert to a matrix
+      df2Dot = as.matrix(filteredDF %>% ungroup() %>% select(-shortName))
+      
+      # replace all NAs with 0
+      df2Dot[is.na(df2Dot)] = 0
+      
+      # Create matrix transpose
+      dfTranspose = t(df2Dot) 
+      
+      # Calculate dot product == sum of where the two values are both 1. 
+      # Thanks @nada
+      overlapMatrix = df2Dot %*% dfTranspose
+      
+      # Remove half the matrix since it's duplicative
+      overlapMatrix[lower.tri(overlapMatrix, diag = TRUE)] = NA
+      
+      # Rename to be the IP names and reshape long
+      colnames(overlapMatrix) = filteredDF$shortName
+      
+      overlapMatrix = data.frame(ip1 = filteredDF$shortName, overlapMatrix)
+      
+      overlapMatrix = gather(overlapMatrix, ip2, numDist, -ip1) %>% 
+        mutate(ip2 = str_replace(ip2, '\\.', ' '), #Remove . introduced by rownames
+               colourText = ifelse(is.na(numDist), NA,
+                                   ifelse(numDist > median(numDist, na.rm = TRUE), grey15K, grey90K))
+               ) #
+      
+            # Refactorize levels
+      overlapMatrix$ip2 = factor(overlapMatrix$ip2, 
+                                 levels = rev(overlapMatrix$ip2))
+      
+      ggplot(overlapMatrix, aes(x = ip1, y = ip2, 
+                                fill = numDist, size = numDist)) +
+        geom_point(shape = 21) +
+        geom_text(aes(label = numDist, colour = colourText),
+        size  = 4) +
+        # geom_text(aes(label = ip2), colour = grey70K,
+                  # hjust = 1, nudge_x = 0.1,
+                  # size  = 5, data = overlapMatrix) +
+        scale_size_continuous(range = c(4, 12),
+                              limits = c(1, max(overlapMatrix$numDist))) +
+        scale_colour_identity() +
+        scale_fill_gradientn(colours = brewer.pal(9,'PuBu')[3:9]) +
+        theme_void() +
+        theme(text = element_text(colour = grey70K, size = 14),
+              line = element_line(colour = grey70K, size = 0.15, linetype = 1, lineend = 'butt'),
+              axis.line = element_line(),
+              axis.ticks = element_blank(),
+              panel.grid.major = element_line(colour = grey70K), 
+              panel.grid.minor = element_line(colour = grey70K), 
+              axis.text.x = element_text(),
+              axis.text.y = element_text(),
+              legend.position = 'none')
+    })
+    
+    
     # footer image ------------------------------------------------------------
     
     output$footer = renderImage({
@@ -188,5 +265,14 @@ shinyServer(
       ))
     }, deleteFile = FALSE)
     
-  # -- fin --   
+    output$footer2 = renderImage({
+      return(list(
+        src = "img/footer_Rw.png",
+        width = '100%',
+        filetype = "image/png",
+        alt = "Plots from USAID's GeoCenter"
+      ))
+    }, deleteFile = FALSE)
+    
+    # -- fin --   
   })

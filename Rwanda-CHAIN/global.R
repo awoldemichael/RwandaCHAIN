@@ -6,6 +6,7 @@
 library(dplyr)
 library(tidyr)
 library(data.table)
+library(stringr)
 
 # -- plotting --
 library(ggvis)

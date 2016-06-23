@@ -56,6 +56,22 @@ body <- dashboardBody(
                       column(4,indivResultUI('subIR4'))),
              fluidRow(imageOutput('footer2'))),
     
+    # -- plot overlap matrix --
+    tabPanel('partner coordination',
+             
+             fluidRow(    
+               column(7, 
+                      fluidRow(h3('Number of Common Districts')),
+                      fluidRow(plotOutput('overlap', height = widthMap,
+                               width = widthMap))),
+               column(5, 
+                      fluidRow(HTML('<br>')),
+                      fluidRow(h4('counts the number of districts in which the two partners both work')),
+                      fluidRow(checkboxGroupInput('selProv', label = '',
+                                         choices = as.character(provinces),
+                                         selected = provinces
+                      ))))),
+    
     # -- Individual region plots --
     tabPanel('Eastern Province',
              fluidRow(indivRegionUI('east'))),
@@ -67,6 +83,10 @@ body <- dashboardBody(
              fluidRow(indivRegionUI('south'))),
     tabPanel('Western Province',
              fluidRow(indivRegionUI('west')))
+    
+
+    
+    # fluidRow(imageOutput('footer2')))
   ))
 
 # Dashboard definition (main call) ----------------------------------------
