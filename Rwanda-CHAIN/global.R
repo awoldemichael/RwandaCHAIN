@@ -25,8 +25,10 @@ library(leaflet)
 
 # import data -------------------------------------------------------------
 # -- IP data --
-df = read.csv('data/RW_projects_adm2_2016-06-14.csv',
-              stringsAsFactors = FALSE)
+# df = read.csv('data/RW_projects_adm2_2016-06-14.csv',
+              # stringsAsFactors = FALSE)
+
+df = readRDS('data/RW_projects_adm2_2016-06-14.rds')
 
 # -- Map data --
 rw_adm2 = readOGR(path.expand("data/"), layer="District_Boundary_2006_simpl")
