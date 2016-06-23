@@ -2,9 +2,9 @@ name: Rwanda-CHAIN
 account: laurahughes
 server: shinyapps.io
 appId: 109500
-bundleId: 487619
+bundleId: 487796
 url: https://laurahughes.shinyapps.io/Rwanda-CHAIN/
-when: 1466700734.35424
+when: 1466713826.22216
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: data/RW_projects_adm2_2016-06-14.csv

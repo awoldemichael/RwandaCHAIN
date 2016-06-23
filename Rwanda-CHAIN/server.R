@@ -237,12 +237,12 @@ shinyServer(
         # geom_text(aes(label = ip2), colour = grey70K,
                   # hjust = 1, nudge_x = 0.1,
                   # size  = 5, data = overlapMatrix) +
-        scale_size_continuous(range = c(4, 12),
+        scale_size_continuous(range = c(4, 14),
                               limits = c(1, max(overlapMatrix$numDist))) +
         scale_colour_identity() +
-        scale_fill_gradientn(colours = brewer.pal(9,'PuBu')[3:9]) +
+        scale_fill_gradientn(colours = brewer.pal(9,'YlGn')[2:9]) +
         theme_void() +
-        theme(text = element_text(colour = grey70K, size = 14),
+        theme(text = element_text(colour = grey70K, size = 16),
               line = element_line(colour = grey70K, size = 0.15, linetype = 1, lineend = 'butt'),
               axis.line = element_line(),
               axis.ticks = element_blank(),
