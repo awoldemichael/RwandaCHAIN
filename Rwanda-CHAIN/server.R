@@ -223,9 +223,9 @@ shinyServer(
         mutate(ip2 = str_replace(ip2, '\\.', ' '), #Remove . introduced by rownames
                colourText = ifelse(is.na(numDist), NA,
                                    ifelse(numDist > median(numDist, na.rm = TRUE), grey15K, grey90K))
-               ) #
+        ) #
       
-            # Refactorize levels
+      # Refactorize levels
       overlapMatrix$ip2 = factor(overlapMatrix$ip2, 
                                  levels = rev(overlapMatrix$ip2))
       
@@ -233,10 +233,10 @@ shinyServer(
                                 fill = numDist, size = numDist)) +
         geom_point(shape = 21) +
         geom_text(aes(label = numDist, colour = colourText),
-        size  = 4) +
+                  size  = 4) +
         # geom_text(aes(label = ip2), colour = grey70K,
-                  # hjust = 1, nudge_x = 0.1,
-                  # size  = 5, data = overlapMatrix) +
+        # hjust = 1, nudge_x = 0.1,
+        # size  = 5, data = overlapMatrix) +
         scale_size_continuous(range = c(4, 14),
                               limits = c(1, max(overlapMatrix$numDist))) +
         scale_colour_identity() +

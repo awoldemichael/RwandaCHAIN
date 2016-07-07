@@ -22,7 +22,7 @@ library(shinydashboard)
 library(rgeos)
 library(rgdal)
 library(maptools)
-library(leaflet)
+library(leaflet) # Note: as of July 2016, requires the development version of leaflet for static labels: devtools::install_github('rstudio/leaflet')
 
 # import data -------------------------------------------------------------
 # -- IP data --
