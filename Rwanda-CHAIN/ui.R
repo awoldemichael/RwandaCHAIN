@@ -30,10 +30,13 @@ header <- dashboardHeader(
 # Body --------------------------------------------------------------------
 
 body <- dashboardBody(
-  # -- Import custom CSS --
+
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "leaflet.css")),
-  
+    # -- Import custom CSS --
+    tags$link(rel = "stylesheet", type = "text/css", href = "leaflet.css"),
+    # -- Include Google Analytics file -- 
+    # Reference on how to include GA: http://shiny.rstudio.com/articles/google-analytics.html
+    includeScript("google-analytics.js")), 
   
   # -- Each tab --
   tabsetPanel(
@@ -63,13 +66,13 @@ body <- dashboardBody(
                column(7, 
                       fluidRow(h3('Number of Common Districts')),
                       fluidRow(plotOutput('overlap', height = widthMap,
-                               width = widthMap))),
+                                          width = widthMap))),
                column(5, 
                       fluidRow(HTML('<br>')),
                       fluidRow(h4('counts the number of districts in which the two partners both work')),
                       fluidRow(checkboxGroupInput('selProv', label = '',
-                                         choices = as.character(provinces),
-                                         selected = provinces
+                                                  choices = as.character(provinces),
+                                                  selected = provinces
                       ))))),
     
     # -- Individual region plots --
@@ -84,7 +87,7 @@ body <- dashboardBody(
     tabPanel('Western Province',
              fluidRow(indivRegionUI('west')))
     
-
+    
     
     # fluidRow(imageOutput('footer2')))
   ))
