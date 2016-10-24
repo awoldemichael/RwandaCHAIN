@@ -1,6 +1,10 @@
 // initialize the map on the "map" div with a given center and zoom
 var map = L.map('mapid', {
   center: [-1.942806, 29.88074],
+  maxBounds: [
+      [-0.442806, 28.38074],
+      [-3.442806, 31.38074]
+],
   zoom: 9
 });
 
@@ -31,10 +35,10 @@ var summaryData = [{
 
 // Popup
 function onEachFeature(feature, layer) {
-    // does this feature have a property named popupContent?
-    if (feature.properties && feature.properties.Dist_ID) {
-        layer.bindPopup(feature.properties.Dist_ID);
-    }
+  // does this feature have a property named popupContent?
+  if (feature.properties && feature.properties.Prov_ID) {
+    layer.bindPopup(feature.properties.Prov_ID);
+  }
 }
 
 // scale_fill function
@@ -76,14 +80,15 @@ function style(feature) {
 
 // Map Admin3 polygons
 var admin3 = new L.GeoJSON.AJAX("geodata/RWA_admin1.geojson",
-{style: style},
-{onEachFeature: onEachFeature}
-);
-admin3.addTo(map);
+{style: style}
+).addTo(map);
 
 
 
+//  .setLatLng([-2.5, 28])
+//  .setContent("I am a standalone popup.")
+//  .openOn(map);
 //([
-  //  [-2.696523, 27.41864],
-  //  [-1.099525, 32.44473]
+//  [-2.696523, 27.41864],
+//  [-1.099525, 32.44473]
 //])
