@@ -8,3 +8,16 @@
 * Navigate to dir in terminal
 * `python -m SimpleHTTPServer 8000`
 * navigate to http://localhost:8000/ in web browser
+
+## git committing to Baboyma's repo
+* Navigate to folder with git repo
+
+### pull
+* `git fetch` to check if need to pull
+* `git status`: # of commits behind/ahead
+* `git pull`: pull commits
+
+### push
+* `git add .`: add all new files
+* `git commit -am "<message>"`: commit all changes w/ message
+* `git push origin dev:dev`: push
