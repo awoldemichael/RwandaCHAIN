@@ -3,6 +3,7 @@ A basic guide on using the CHAIN intervention site
 
 ## General layout of the site.
 There are four basic areas of the site:
+
 1. **Programs**: Where you can enter data for your organization.
 2. **Partners**: A facebook of all the partners in the consortium (and some USAID employees)
 3. **Mapping**: Visualizations of where everyone is working
