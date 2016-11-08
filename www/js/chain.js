@@ -83,8 +83,18 @@ var admin3 = new L.GeoJSON.AJAX("geodata/RWA_admin1.geojson",
 {style: style}
 ).addTo(map);
 
+// read in the sector-level data
+$.getJSON( "/data/query-result.json", function( data ) {
+    console.log( "JSON Data: " + data);
+    $.trim(data);
 
 
+    $.each( data, function( key, val ) {
+        console.log(key + "value:: " + val );
+    });
+});
+
+//JSON.parse(result.data)  
 //  .setLatLng([-2.5, 28])
 //  .setContent("I am a standalone popup.")
 //  .openOn(map);
