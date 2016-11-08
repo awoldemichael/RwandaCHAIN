@@ -23,5 +23,7 @@
 * `git push origin dev:dev`: push
 
 ## Querying the database
-* http://devgeocenter.org/rwanda-programs/content/?action=query&target=acts-list
-* $.trim()
+* activity list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=acts-list
+* intervention list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=intvs-list
+* partner/intervention/location list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=acts-locs
+* $.trim(): jQuery code to remove trailing spaces.
