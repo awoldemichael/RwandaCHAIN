@@ -21,3 +21,7 @@
 * `git add .`: add all new files
 * `git commit -am "<message>"`: commit all changes w/ message
 * `git push origin dev:dev`: push
+
+## Querying the database
+* http://devgeocenter.org/rwanda-programs/content/?action=query&target=acts-list
+* $.trim()
