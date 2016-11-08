@@ -21,7 +21,8 @@ rw2 = rw %>%
                                rw$shortName == 'RSMP' ~ 'SFH',
                                TRUE ~ as.character(rw$shortName)
   )) %>% 
-  mutate(pcode = ifelse(shortName %in% ip_codes$code, shortName, NA))
+  mutate(pcode = ifelse(shortName %in% ip_codes$code, shortName, NA)) %>% 
+  distinct()
 
 
 # Checking merge correctly
