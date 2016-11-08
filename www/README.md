@@ -4,6 +4,13 @@
 * Converted to geoJSON in QGIS
 
 
+## Querying the database
+* activity list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=acts-list
+* intervention list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=intvs-list
+* partner/intervention/location list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=acts-locs
+* $.trim(): jQuery code to remove trailing spaces.
+
+
 ## Setting up local server to test
 * Navigate to dir in terminal
 * `python -m SimpleHTTPServer 8000`
@@ -21,9 +28,3 @@
 * `git add .`: add all new files
 * `git commit -am "<message>"`: commit all changes w/ message
 * `git push origin dev:dev`: push
-
-## Querying the database
-* activity list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=acts-list
-* intervention list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=intvs-list
-* partner/intervention/location list: http://devgeocenter.org/rwanda-programs/content/?action=query&target=acts-locs
-* $.trim(): jQuery code to remove trailing spaces.
