@@ -37,12 +37,16 @@ intervention_list = c('PHP', 'HE')
 # Note: relying on the WFP's classification of sectors and livelihood zones.
 # Assumes a sector is in a SINGLE livelihood zone.  Appears based on maps to be mostly correct, with some exceptions in the Eastern Agro-pastoral zones.
 
-admin3_codebk = hh %>% 
+lz_codebk = hh %>% 
   select(admin1, admin2, admin3, livelihood_zone) %>% 
   distinct()
 
 
-
+admin3_codebk = RWA_admin3$df %>% 
+  select(prov_id = Prov_ID, province = Province,
+         dist_id = Dist_ID, district = District,
+         sect_id = Sect_ID, sector = Sector) %>% 
+  distinct()
 
 
 # import sector-level data ------------------------------------------------
@@ -62,11 +66,36 @@ sectors = sectors$data
 
 interventions = jsonlite::fromJSON('~/GitHub/RwandaCHAIN/www/data/intervention-list.json', flatten = T, simplifyMatrix = T, simplifyDataFrame = T)
 
+interventions = interventions %>% rename(intervention_name = intervention)
+
+
+partners = jsonlite::fromJSON('~/GitHub/RwandaCHAIN/www/data/partner-list.json', flatten = T, simplifyMatrix = T, simplifyDataFrame = T)
+partners = partners$data
 
 # merge together names ----------------------------------------------------
 sectors = left_join(sectors, interventions, c("intervention" = "icode",
                                               "techoffice" = "tacode"))
 
+sectors = sectors %>% 
+  select(-startdate, -enddate, -pcode) %>% 
+  rename(techcode = techoffice,
+         prov_id = province,
+         dist_id = district,
+         sect_id = sector)
+
+
+sectors = left_join(sectors, partners, by = c("partner" = "pcode"))
+
+# merge in geo names
+sectors = left_join(sectors, admin3_codebk, by = c('prov_id', 'dist_id', 'sect_id'))
+
+# remove dupl. info
+chain = sectors %>% 
+  select(province, district, sector,
+         partner, techarea, intervention_name, 
+         techoffice, activity, startdate.date, enddate.date) %>% 
+  distinct()
+  
 # Filter out nutrition-related info ------------------------------------------
 stunting_interv = sectors %>% 
   filter(techoffice %in% ta_list | intervention %in% intervention_list) %>% 
