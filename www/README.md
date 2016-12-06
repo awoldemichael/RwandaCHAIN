@@ -11,6 +11,9 @@
 * $.trim(): jQuery code to remove trailing spaces.
 
 
+## 
+
+
 ## Setting up local server to test
 * Navigate to dir in terminal
 * `python -m SimpleHTTPServer 8000`
