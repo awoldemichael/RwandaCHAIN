@@ -31,4 +31,8 @@ chain_wide = chain %>%
          SFH = coalesce(SFH, 0)) %>% 
   rowwise() %>% 
   mutate(total = sum(AEE, Caritas, GC, CRS, FXB, Hplus, HSPH, SFH)
-         )
+  )
+
+# id the rows that could be coordinated
+
+coord = chain_wide %>% filter(total > 1)
