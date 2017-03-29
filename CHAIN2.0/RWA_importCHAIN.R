@@ -61,10 +61,12 @@ admin3_codebk = RWA_admin3$df %>%
 # sed -n  's/"{/{/gpw intervention-location_2016-12-05.json' output2.json
 
 # Import data from Baboyma's dataset
-sectors = jsonlite::fromJSON('~/GitHub/RwandaCHAIN/www/data/intervention-location_2016-12-05.json', flatten = T, simplifyMatrix = T, simplifyDataFrame = T)
-sectors = sectors$data
+# sectors = jsonlite::fromJSON('~/GitHub/RwandaCHAIN/www/data/intervention-location_2016-12-05.json', flatten = T, simplifyMatrix = T, simplifyDataFrame = T)
+# sectors = sectors$data
 
-interventions = jsonlite::fromJSON('~/GitHub/RwandaCHAIN/www/data/intervention-list.json', flatten = T, simplifyMatrix = T, simplifyDataFrame = T)
+sectors = read.csv('~/GitHub/RwandaCHAIN/www/data/Rwanda - CHAIN Programs_2016-12-06.csv')
+
+interventions = jsonlite::fromJSON('~/GitHub/RwandaCHAIN/www/data/intervention-location_2016-11-28.json', flatten = T, simplifyMatrix = T, simplifyDataFrame = T)
 
 interventions = interventions %>% rename(intervention_name = intervention)
 
