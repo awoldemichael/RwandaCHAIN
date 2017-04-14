@@ -209,5 +209,6 @@ plot(ntwk, edge.arrow.size = 0, layout = l,
 
 # export data -------------------------------------------------------------
 
-write.csv(edges, '~/Documents/USAID/Rwanda/CHAIN/dataout/20170414_IPcnnxn.csv')
+write.csv(edges, '~/Documents/USAID/Rwanda/CHAIN/dataout/20170414_IP_edges.csv')
+write.csv(nodes, '~/Documents/USAID/Rwanda/CHAIN/dataout/20170414_IP_nodes.csv')
 
