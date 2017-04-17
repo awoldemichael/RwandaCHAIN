@@ -201,7 +201,7 @@ l = layout_with_lgl(ntwk, root = 'CRS', coolexp = 1)
 V(ntwk)$size = V(ntwk)$unique * 3
 
 plot(ntwk, edge.arrow.size = 0, layout = l,
-     edge.curved = 0.1, edge.color = edge.col,
+     edge.curved = 0.1, edge.color = edge.color,
      # vertex.size = 25,
      vertex.label.font = 2, vertex.label.family = 'Lato Light',
      vertex.label.color = grey90K, vertex.frame.color = grey75K)
@@ -209,6 +209,6 @@ plot(ntwk, edge.arrow.size = 0, layout = l,
 
 # export data -------------------------------------------------------------
 
-write.csv(edges, '~/Documents/USAID/Rwanda/CHAIN/dataout/20170414_IP_edges.csv')
-write.csv(nodes, '~/Documents/USAID/Rwanda/CHAIN/dataout/20170414_IP_nodes.csv')
+write.csv(edges, '~/GitHub/RwandaCHAIN/CHAIN-ntwk/20170414_IP_edges.csv')
+write.csv(nodes, '~/GitHub/RwandaCHAIN/CHAIN-ntwk/20170414_IP_nodes.csv')
 
