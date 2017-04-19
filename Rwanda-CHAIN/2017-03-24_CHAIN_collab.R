@@ -73,19 +73,19 @@ edges = edges %>% mutate(partners = ifelse(partner1 > partner2, paste0(partner2,
 edges = edges %>% 
   group_by(partners) %>% 
   summarise(n = sum(n)) %>% 
-  separate(partners, c('partner1', 'partner2'), sep = '_') 
+  separate(partners, c('source', 'target'), sep = '_') 
 
 
 # pull out the unique partners
-nodes = data.frame(partner = unique(c(edges$partner1, edges$partner2)))
+nodes = data.frame(id = unique(c(edges$source, edges$target)))
 
 # pull out the number of unique partners each IP has
 edges_long = edges %>% gather(key = partner_num, value = partner, -n)
 unique_cnnxns = edges_long %>% group_by(partner) %>% summarise(unique = n())
 num_cnnxns = edges_long %>% group_by(partner) %>% summarise(total = sum(n))
 
-nodes = full_join(nodes, unique_cnnxns, by = 'partner')
-nodes = full_join(nodes, num_cnnxns, by = 'partner')
+nodes = full_join(nodes, unique_cnnxns, by = c('id' = 'partner'))
+nodes = full_join(nodes, num_cnnxns, by = c('id' = 'partner'))
   
 # igraph ------------------------------------------------------------------
 # tutorial at http://kateto.net/network-visualization
@@ -209,6 +209,6 @@ plot(ntwk, edge.arrow.size = 0, layout = l,
 
 # export data -------------------------------------------------------------
 
-write.csv(edges, '~/GitHub/RwandaCHAIN/CHAIN-ntwk/20170414_IP_edges.csv')
-write.csv(nodes, '~/GitHub/RwandaCHAIN/CHAIN-ntwk/20170414_IP_nodes.csv')
+write.csv(edges, '~/GitHub/RwandaCHAIN/CHAIN-ntwk/data/20170414_IP_edges.csv')
+write.csv(nodes, '~/GitHub/RwandaCHAIN/CHAIN-ntwk/data/20170414_IP_nodes.csv')
 
