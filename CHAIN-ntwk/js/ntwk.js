@@ -9,9 +9,9 @@ var simulation = d3.forceSimulation()
   .force("charge", d3.forceManyBody().strength(-1000))
   .force("center", d3.forceCenter(width / 2, height / 2));
 
-d3.csv("data/20170414_IP_nodes.csv", function(error, nodeData) {
+d3.csv("./data/20170414_IP_nodes.csv", function(error, nodeData) {
   if (error) throw error;
-  d3.csv("data/20170414_IP_edges.csv", function(error, edgeData) {
+  d3.csv("./data/20170414_IP_edges.csv", function(error, edgeData) {
     if (error) throw error;
 
 
