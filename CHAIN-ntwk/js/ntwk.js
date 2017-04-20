@@ -117,7 +117,8 @@ var divEdge = d3.select("body").append("div")
         .style("opacity", 0.1);
 
 
-    node.transition()
+    node.style("opacity", 0.9)
+    .transition()
     // .filter(function(d, i) { console.log(d.id); console.log(sel.id == "AEE"); sel.id == "AEE";})
       .filter(function(d, i) { return !selIPs.includes(d.id);})
       .duration(200)
@@ -153,14 +154,16 @@ var divEdge = d3.select("body").append("div")
 // -- edge tooltip --
       link.on("mouseover", function(sel) {
   // grey out edges
-        link.transition()
+        link.style("opacity", 1)
+        .transition()
         .filter(function(d) { return d.source != sel.source | d.target != sel.target;})
             .duration(200)
             .style("opacity", 0.1);
 
 
   // grey out nodes
-        node.transition()
+        node.style("opacity", 0.9)
+        .transition()
         .filter(function(d) { return d.id != sel.source.id & d.id != sel.target.id;})
             .duration(200)
             .style("opacity", 0.1);
