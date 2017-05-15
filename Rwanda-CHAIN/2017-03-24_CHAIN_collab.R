@@ -31,8 +31,9 @@ df = df %>%
 # expand.grid(subset)
 
 
-# make long version
-df_long = df %>% gather(partner_num, ip, 3:9)
+# make long version (not really used)
+df_long = df %>% gather(partner_num, ip, 3:9) %>% 
+  mutate(ip = ifelse(ip == 'CIAT', 'H+', ip))
 
 # Create combos of all the partners to stack data -------------------------
 partners = c('Partner1', 'Partner2', 'Partner3', 'Partner4', 'Partner5', 'Partner6', 'Partner7')
@@ -57,6 +58,11 @@ for (i in 1:nrow(combos)) {
   df_tidy = bind_rows(df_tidy, df_merged)
 }
 
+# Replace synonyms.
+df_tidy = df_tidy %>%   
+  mutate(partner1 = ifelse(partner1 == 'CIAT', 'H+', partner1),
+         partner2 = ifelse(partner2 == 'CIAT', 'H+', partner2))
+
 
 # collapse to nodes/edges -------------------------------------------------
 
@@ -67,7 +73,9 @@ df_tidy = df_tidy %>% filter(!is.na(partner1), !is.na(partner2))
 edges = df_tidy %>% group_by(partner1, partner2) %>% summarise(n = n()) %>% arrange(desc(n))
 
 # create a merged partner combo, sorted alphabetically
-edges = edges %>% mutate(partners = ifelse(partner1 > partner2, paste0(partner2, '_', partner1), paste0(partner1, '_', partner2)))
+edges = edges %>%
+  mutate(partners = ifelse(partner1 > partner2, paste0(partner2, '_', partner1), 
+                           paste0(partner1, '_', partner2)))
 
 # recollapse, and split partners back into partner1 and partner2
 edges = edges %>% 
